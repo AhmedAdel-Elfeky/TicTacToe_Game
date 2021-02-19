@@ -49,7 +49,7 @@ public  class TicTacBase extends BorderPane {
     
     ClientPlayer c = null;
     
-    public TicTacBase() {
+    public TicTacBase(ClientPlayer c) {
 
         menuBar = new MenuBar();
         menu = new Menu();
@@ -78,7 +78,7 @@ public  class TicTacBase extends BorderPane {
         Button[][] ButtonsArray = {{button,button0,button1},
                                   {button2,button3,button4},
                                   {button5,button6,button7}};
-        c = new ClientPlayer();
+        //c = new ClientPlayer();
         c.setButtonData(ButtonsArray);
      
         

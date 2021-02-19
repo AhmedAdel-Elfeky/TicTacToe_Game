@@ -18,27 +18,53 @@ import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 
 /**
  *
  * @author eslam
  */
 public class TicTacToe extends Application {
-    
+    static Stage primaryStage;
+    public ClientPlayer client = new ClientPlayer();
+    LoginPageBase root;
+    TicTacBase childGame=null;
+    Scene scene ;
     @Override
-    public void start(Stage primaryStage) {
-
+    public void start(Stage primary) {
+        primaryStage = primary;
+        Pane o = new Pane();
+        childGame = new TicTacBase(client); 
+        scene = new Scene(o, 950, 530);
+        root = new LoginPageBase(client,scene,childGame);
+        scene.setRoot(root);
         
-        TicTacBase root = new TicTacBase();
-       
-        Scene scene = new Scene(root, 950, 530);
-        String css = this.getClass().getResource("mycss.css").toExternalForm();
-        scene.getStylesheets().add(css);
+        //String css = this.getClass().getResource("mycss.css").toExternalForm();
+       // scene.getStylesheets().add(css);
         root.getStyleClass().add("root");
         primaryStage.setTitle("TicTaacToe");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+    
+     
+    
+//     public static void switchScenes (int sceneNumber)
+//    {
+//        if(sceneNumber == 1)
+//        {
+//            LoginPageBase root = new LoginPageBase();
+//            root.setClient(client);
+//            Scene scene = new Scene(root, 800, 420);
+//            primaryStage.setScene(scene);
+//        }
+//        else if(sceneNumber == 2)
+//        {
+//            TicTacBase root = new TicTacBase();
+//            Scene scene = new Scene(root, 800, 420);
+//            primaryStage.setScene(scene);
+//        }
+//    }
 
     /**
      * @param args the command line arguments

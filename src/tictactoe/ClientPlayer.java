@@ -13,6 +13,7 @@ import java.net.*;
 import java.io.*;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -25,10 +26,14 @@ public class ClientPlayer {
     public Thread th1;
     public String msgFromServer = "";
     public Button[][] gridButtons;
-   
+    boolean  State;
+    public int trueId;
+    public int falseId;
+    public Scene gameScene;
+    public TicTacBase gameRoot;
 
     public ClientPlayer() {
-     
+
         try {
             mySocket = new Socket("127.0.0.1", 5005);
             dis = new DataInputStream(mySocket.getInputStream());
@@ -38,69 +43,113 @@ public class ClientPlayer {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-       
+
+    }
+
+    public void sendPlayMoveToserver(String rowcol) {
+        ps.println(rowcol);
     }
     
-     public void sendPlayMoveToserver(String rowcol) 
-     {
-        ps.println(rowcol);
-     }
-     
-     public String ReadPlayMoveFromserver() 
-     {
-         String msg=null;
-         try
-         {
-            msg = dis.readLine();
-            
-         }
-         catch ( IOException ex)
-	{
-            ex.printStackTrace();
-	}      
-         return msg;
-     }
-     
-     public void setButtonData(Button[][] gridB)
-     {
-         this.gridButtons = gridB;
-     }
-     
-     public void DrawRecievedData(String msg)
-     {
-         int row ,col;
-         String f1 = msg.substring(0,1);
-         row = Integer.parseInt(f1);
-         System.out.println(row);
-         f1 = msg.substring(1);
-         col = Integer.parseInt(f1);
-         System.out.println(col);
-         this.gridButtons[row][col].setText("x");
-         this.gridButtons[row][col].setDisable(true);
-     }
+    public void setGameScene(Scene nScene,TicTacBase gameR)
+    {
+       this.gameScene = nScene; 
+       this.gameRoot = gameR;
+    }
+    
+    public void sendDataToServer(String operationCode)
+    {
+        ps.println(operationCode);
+    }
 
-    class ThreadOne extends Thread
-	{
-            public void run()
+//    public String ReadPlayMoveFromserver() {
+//        String msg = null;
+//        try {
+//            msg = dis.readLine();
+//
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//        }
+//        return msg;
+//    }
+    
+    public String ReadDataFromServer() {
+        String msg = null;
+        try {
+            msg = dis.readLine();
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return msg;
+    }
+
+    public void setButtonData(Button[][] gridB) {
+        this.gridButtons = gridB;
+    }
+
+    public void DrawRecievedData(String msg) {
+        int row, col;
+        String f1 = msg.substring(0, 2);
+        
+        switch(f1)
+        {
+            case "00":
             {
-                while(true)
+                if("0".equals(msg.substring(2,3)))
                 {
-                    try
-                    {
-                        msgFromServer = ReadPlayMoveFromserver();
-                        Platform.runLater(new Runnable() {
+                    this.falseId = Integer.parseInt(msg.substring(3));
+                    this.State= Boolean.parseBoolean("0");
+                    System.out.println(falseId);
+                    System.out.println(State);
+                }
+                else
+                {
+                    this.trueId = Integer.parseInt(msg.substring(3));
+                    this.State= Boolean.parseBoolean("1");
+                }
+                System.out.println(msg);
+                
+                break;
+            }
+            case "01":
+            {
+                if(Integer.parseInt(msg.substring(2)) != -1)
+                {
+                    gameScene.setRoot(gameRoot);
+                }
+                break;
+            }
+            default:
+            {
+                
+            }
+        }
+//        row = Integer.parseInt(f1);
+//        System.out.println(row);
+//        f1 = msg.substring(1);
+//        col = Integer.parseInt(f1);
+//        System.out.println(col);
+//        this.gridButtons[row][col].setText("x");
+//        this.gridButtons[row][col].setDisable(true);
+    }
+
+    class ThreadOne extends Thread {
+
+        public void run() {
+            while (true) {
+                try {
+                    msgFromServer = ReadDataFromServer();
+                    Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                             DrawRecievedData(msgFromServer);    
+                            DrawRecievedData(msgFromServer);
                         }
-                         });
-                        
-                    }
-                    catch ( Exception ex)
-                    {
-                        System.out.println("Server is offline");
-                        ex.printStackTrace();
-                    }				
+                    });
+
+                } catch (Exception ex) {
+                    System.out.println("Server is offline");
+                    ex.printStackTrace();
+                }
 //                    try
 //                    {
 //                            Thread.sleep(30);
@@ -109,9 +158,9 @@ public class ClientPlayer {
 //                    {
 //                            e.printStackTrace();
 //                    }
-                }
             }
-	}
+        }
+    }
 
 }
 
@@ -139,9 +188,9 @@ public class ClientPlayer {
         }
     }
 
-*/
+ */
 
-/*
+ /*
 public ClientPlayer(TicTacBase r) {
         root = r;
         try {
@@ -166,4 +215,4 @@ public ClientPlayer(TicTacBase r) {
         Thread th1 = new Thread(this);
         th1.start();
     }
-*/
+ */
