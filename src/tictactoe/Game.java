@@ -6,6 +6,8 @@
 package tictactoe;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -18,7 +20,8 @@ import javafx.util.Pair;
 public class Game {
 
     public int gameId;
-    public Instant game_date;
+    //public Instant game_date;
+    LocalDate gameDate ;
     public int playerOneId;
     public int playerwoId;
     final String PlayerOneSymbol = "X";
@@ -26,9 +29,14 @@ public class Game {
     
 
     public Game(int firstPlayer,int secondPlayer) {
-        game_date = Instant.now();
+        gameDate = LocalDate.now(); 
         playerOneId = firstPlayer;
         playerwoId = secondPlayer;
+    }
+    
+    public String getGameDate()
+    {
+        return gameDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
     /**

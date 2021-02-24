@@ -64,11 +64,12 @@ public class StartGameMenuBase extends BorderPane {
         button1.setMnemonicParsing(false);
         button1.setPrefHeight(31.0);
         button1.setPrefWidth(71.0);
-        button1.setText("Back");
+        button1.setText("Sign Out");
         button1.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
                     client.setGameRoot("login");
+                    client.sendDataToServer("SO");
                 }
             });
         setCenter(pane);

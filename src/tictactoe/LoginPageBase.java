@@ -10,6 +10,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
@@ -91,9 +92,9 @@ public class LoginPageBase extends BorderPane {
         button.setLayoutY(230.0);
         button.setMnemonicParsing(false);
         button.setText("login");
-        button.setOnAction(new EventHandler<ActionEvent>() {
+        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
-            public void handle(ActionEvent ev)
+            public void handle(MouseEvent ev)
             {
                 setLoginUserData(textField.getText(),passwordField.getText());
                 int userLength = userName.length();
@@ -147,9 +148,9 @@ public class LoginPageBase extends BorderPane {
         button0.setLayoutY(270.0);
         button0.setMnemonicParsing(false);
         button0.setText("Register");
-        button0.setOnAction(new EventHandler<ActionEvent>() {
+        button0.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
-            public void handle(ActionEvent ev)
+            public void handle(MouseEvent ev)
             {
                 if(!textField0.getText().equals("") && passwordField0.getText().equals(passwordField1.getText()) 
                         && !passwordField0.getText().equals("")  )

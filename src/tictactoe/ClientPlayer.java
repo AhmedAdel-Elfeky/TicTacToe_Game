@@ -40,7 +40,7 @@ public class ClientPlayer {
     //volatile String symbol;
     volatile String clientSymbol;
     
-    public Scene gameScene;
+    public volatile Scene gameScene;
     public TicTacBase gameRoot;
     public LoginPageBase loginRoot;
     public Button[][] gridButtons;
@@ -85,7 +85,7 @@ public class ClientPlayer {
         }
     }
     
-     public void setClientRootsAndScene(Scene s,LoginPageBase l ,TicTacBase g,StartGameMenuBase st)
+    public void setClientRootsAndScene(Scene s,LoginPageBase l ,TicTacBase g,StartGameMenuBase st)
     {
         this.gameScene = s;
         this.gameRoot = g;
@@ -127,10 +127,10 @@ public class ClientPlayer {
     public void DrawRecievedData(String msg) {
         int row, col;
         String f1 = msg.substring(0, 2);
-        
+  
         switch(f1)
         {
-            case "00":
+            case "00": // login
             {
                 if("0".equals(msg.substring(2,3)))
                 {
@@ -159,9 +159,8 @@ public class ClientPlayer {
 //                  }
 //                  break;
 //            }
-            case "04":
+            case "04": // go to game
             {
-                  System.out.println(msgFromServer);
                   this.setGameRoot("game");
                   break;
             }

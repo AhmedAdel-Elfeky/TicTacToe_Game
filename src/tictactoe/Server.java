@@ -45,8 +45,8 @@ class ServerHandler extends Thread {
     PrintStream ps;
     int unreliableId;
     volatile int reliableId;
-    volatile boolean GrantAcssesState = false;
-    private int GameID ;
+    volatile boolean grantAcssesState = false;
+    private int gameID ;
     static volatile int waitingPlayerId = 0 ;
     public volatile String msgFromClient = "";
     
@@ -78,8 +78,8 @@ class ServerHandler extends Thread {
                // System.out.println("tictactoe.ServerHandler.<iniiiiiiiiiiiiit>()");
                 symbol = 0;
             }
-              this.ps.println("0N"+turn++);
-             sendMessageToAll("0T" + symbol);
+            //  this.ps.println("0N"+turn++);
+           //  sendMessageToAll("0T" + symbol);
             start();
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -93,15 +93,15 @@ class ServerHandler extends Thread {
                 ParseDataFromClients(msgFromClient);
                 //System.out.println(str);
                // sendMessageToAll(str);
-                if (msgFromClient.substring(0,2).equals("0S")) {
-                        if (symbol == 0) {
-                            symbol = 1;
-                        } else {
-                            symbol = 0;
-                        }
-                        sendMessageToAll("0T" + symbol);
-                    }
-                    sendMessageToAll(msgFromClient);
+//                if (msgFromClient.substring(0,2).equals("0S")) {
+//                        if (symbol == 0) {
+//                            symbol = 1;
+//                        } else {
+//                            symbol = 0;
+//                        }
+//                        sendMessageToAll("0T" + symbol);
+//                    }
+//                    sendMessageToAll(msgFromClient);
             } catch (IOException ex) {
                 clientsVector.remove(this);
                 unauthorizedClientsVector.remove(this);
@@ -133,7 +133,7 @@ class ServerHandler extends Thread {
                 }
                 break;
             }
-            case "03":
+            case "03": //want to play
             {
                 if(msg.substring(2, 3).equals("1")) //want to play another second player
                 {
@@ -146,7 +146,11 @@ class ServerHandler extends Thread {
                         if(this.reliableId != ServerHandler.waitingPlayerId)
                         {
                             Game game = new Game(waitingPlayerId,this.reliableId);
+                            game.gameId = Server.dBase.addNewGame(game.getGameDate());
+                            runningGames.put(game.gameId, game);
                             clients.get(waitingPlayerId).ps.println("04");
+                            clients.get(waitingPlayerId).gameID = game.gameId;
+                            this.gameID = game.gameId;
                             this.ps.println("04");
                             waitingPlayerId = 0;
                         }
@@ -159,9 +163,13 @@ class ServerHandler extends Thread {
                 }
                 break;
             }
-            case "0S":
+            case "S0": //sign out
             {
-                System.out.println(msg);
+                unauthorizedClientsVector.add(this);
+                clientsVector.remove(this);
+                clients.remove(this.reliableId);
+                this.reliableId = -1;
+                this.grantAcssesState = false;
                 break;
             }
         }
