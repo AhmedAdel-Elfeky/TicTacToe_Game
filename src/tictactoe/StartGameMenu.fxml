@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button layoutX="241.0" layoutY="108.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="65.0" text="vs AI" />
+            <Button layoutX="240.0" layoutY="181.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="67.0" text="vs Player" />
+            <Button layoutX="362.0" layoutY="274.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="71.0" text="Back" />
+         </children>
+      </Pane>
+   </center>
+</BorderPane>

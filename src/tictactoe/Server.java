@@ -25,11 +25,13 @@ public class Server {
             ex.printStackTrace();
         }
         while (true) {
-            try {
+            try 
+            {
                 Socket s = serverSocket.accept();
-                new ChatHandler(s,unAuthorizedClintsNum);
+                new ServerHandler(s,unAuthorizedClintsNum);
                 unAuthorizedClintsNum++;
-            } catch (IOException ex) {
+            } 
+            catch (IOException ex) {
                 ex.printStackTrace();
             }
         }
@@ -37,42 +39,72 @@ public class Server {
 
 }
 
-class ChatHandler extends Thread {
+class ServerHandler extends Thread {
     
     DataInputStream dis;
     PrintStream ps;
     int unreliableId;
-    int reliableId;
-    boolean GrantAcssesState = false;
+    volatile int reliableId;
+    volatile boolean GrantAcssesState = false;
+    private int GameID ;
+    static volatile int waitingPlayerId = 0 ;
+    public volatile String msgFromClient = "";
     
+    //nihal
+    static int symbol = 0;
+    static int turn = 0;
     
-    static Vector<ChatHandler> clientsVector = new Vector<ChatHandler>();
-    static Vector<ChatHandler> unauthorizedClientsVector = new Vector<ChatHandler>();
+    static Vector<ServerHandler> clientsVector = new Vector<ServerHandler>();
+    static Vector<ServerHandler> unauthorizedClientsVector = new Vector<ServerHandler>();
+    
+    static HashMap<Integer,ServerHandler> clients = new HashMap<Integer,ServerHandler>();
+    static HashMap<Integer,Game> runningGames = new HashMap<Integer,Game>();
+    
 
-    public ChatHandler(Socket cs, int unauthorizedId) {
-        try {
+    public ServerHandler(Socket cs, int unauthorizedId) {
+        try 
+        {
             dis = new DataInputStream(cs.getInputStream());
             ps = new PrintStream(cs.getOutputStream());
             unreliableId = unauthorizedId;
             unauthorizedClientsVector.add(this);
-            ps.println("00"+"0"+unreliableId);
+            
+            // unauthorizedClientsVector.forEach(action);
+            ps.println("00"+"0"+unreliableId); //00 auth  0 unauthorized 
+             if (symbol == 0) {
+               // System.out.println("tictactoe.ServerHandler.<iiiiinit>()");
+                symbol = 1;
+            } else {
+               // System.out.println("tictactoe.ServerHandler.<iniiiiiiiiiiiiit>()");
+                symbol = 0;
+            }
+              this.ps.println("0N"+turn++);
+             sendMessageToAll("0T" + symbol);
             start();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
     
-    
-    
     public void run() { //this functio run when the server recieve new data
         while (true) {
             try {
-                String str = dis.readLine();
-                ParseDataFromClients(str);
+                msgFromClient = dis.readLine();
+                ParseDataFromClients(msgFromClient);
                 //System.out.println(str);
                // sendMessageToAll(str);
+                if (msgFromClient.substring(0,2).equals("0S")) {
+                        if (symbol == 0) {
+                            symbol = 1;
+                        } else {
+                            symbol = 0;
+                        }
+                        sendMessageToAll("0T" + symbol);
+                    }
+                    sendMessageToAll(msgFromClient);
             } catch (IOException ex) {
                 clientsVector.remove(this);
+                unauthorizedClientsVector.remove(this);
                 break;
             }
         }
@@ -85,26 +117,58 @@ class ChatHandler extends Thread {
         {
             case "01":
             {
-                for(ChatHandler ua : unauthorizedClientsVector)
+                int userLength = Integer.parseInt(msg.substring(4, 5));
+                String userName = msg.substring(5, userLength+5);
+                int passwordLength = Integer.parseInt(msg.substring(5+userLength, 6+userLength));
+                String password = msg.substring( 6+userLength, passwordLength+6+userLength);
+                int  authResult = Server.dBase.checkLoginUser(userName, password);
+                System.out.println(authResult);
+                if(authResult != -1)
                 {
-                    if(ua.unreliableId == Integer.parseInt(msg.substring(2, 4)))
-                    {
-                        int userLength = Integer.parseInt(msg.substring(4, 5));
-                        String userName = msg.substring(5, userLength+5);
-                        int passwordLength = Integer.parseInt(msg.substring(5+userLength, 6+userLength));
-                        String password = msg.substring( 6+userLength, passwordLength+6+userLength);
-                        int  f = Server.dBase.checkLoginUser(userName, password);
-                        System.out.println(f);
-                        ua.ps.println("01"+f);
-                    }
+                    this.reliableId = authResult;
+                    this.ps.println("00"+"1"+authResult);
+                    clientsVector.add(this);
+                    clients.put(this.reliableId,this);
+                    unauthorizedClientsVector.remove(this);
                 }
+                break;
+            }
+            case "03":
+            {
+                if(msg.substring(2, 3).equals("1")) //want to play another second player
+                {
+                    if(ServerHandler.waitingPlayerId == 0)
+                    {
+                        waitingPlayerId = this.reliableId;
+                    }
+                    else
+                    {
+                        if(this.reliableId != ServerHandler.waitingPlayerId)
+                        {
+                            Game game = new Game(waitingPlayerId,this.reliableId);
+                            clients.get(waitingPlayerId).ps.println("04");
+                            this.ps.println("04");
+                            waitingPlayerId = 0;
+                        }
+                    }
+                         
+                }
+                else // want to play against ai
+                {
+                    
+                }
+                break;
+            }
+            case "0S":
+            {
+                System.out.println(msg);
                 break;
             }
         }
     }
 
     void sendMessageToAll(String st) {
-        for (ChatHandler ch : clientsVector) {
+        for (ServerHandler ch : clientsVector) {
             try {
                 ch.ps.println(st);
             } catch (Exception ex) {

@@ -17,11 +17,18 @@ import javafx.util.Pair;
  */
 public class Game {
 
-    public int id;
+    public int gameId;
     public Instant game_date;
+    public int playerOneId;
+    public int playerwoId;
+    final String PlayerOneSymbol = "X";
+    final String PlayerTwoSymbol = "O";
+    
 
-    public Game() {
+    public Game(int firstPlayer,int secondPlayer) {
         game_date = Instant.now();
+        playerOneId = firstPlayer;
+        playerwoId = secondPlayer;
     }
 
     /**

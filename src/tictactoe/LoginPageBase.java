@@ -50,9 +50,8 @@ public class LoginPageBase extends BorderPane {
     }
     
     
-    public LoginPageBase(ClientPlayer client,Scene s,TicTacBase nextRoot) {
-       
-       
+    public LoginPageBase(ClientPlayer client) {
+      
         tabPane = new TabPane();
         tab = new Tab();
         pane = new Pane();
@@ -97,10 +96,6 @@ public class LoginPageBase extends BorderPane {
             public void handle(ActionEvent ev)
             {
                 setLoginUserData(textField.getText(),passwordField.getText());
-                //DataBase db = new DataBase();
-                //int  f = db.checkLoginUser(userName, password);
-               // System.out.println(f);
-                //TicTacToe.switchScenes(2);
                 int userLength = userName.length();
                 int passwordLength = password.length();
                 if(client.falseId < 10)
@@ -111,8 +106,6 @@ public class LoginPageBase extends BorderPane {
                 else
                      client.sendDataToServer("01"+client.falseId+userLength+userName+passwordLength+password);    
                
-                client.setGameScene(s,nextRoot);
-               // s.setRoot(nextRoot);
             }
         });
 
