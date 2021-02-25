@@ -23,8 +23,8 @@ import javafx.scene.layout.GridPane;
 public class ClientPlayer {
 
     public Socket mySocket;
-    public DataInputStream dis;
-    public PrintStream ps;
+    public DataInputStream inputStream;
+    public PrintStream printStream;
     public Thread th1;
    
     public volatile String msgFromServer = "";
@@ -49,8 +49,8 @@ public class ClientPlayer {
 
         try {
             mySocket = new Socket("127.0.0.1", 5005);
-            dis = new DataInputStream(mySocket.getInputStream());
-            ps = new PrintStream(mySocket.getOutputStream());
+            inputStream = new DataInputStream(mySocket.getInputStream());
+            printStream = new PrintStream(mySocket.getOutputStream());
             th1 = new ThreadOne();
             th1.start();
        
@@ -63,7 +63,7 @@ public class ClientPlayer {
     }
 
     public void sendPlayMoveToserver(String rowcol) {
-        ps.println(rowcol);
+        printStream.println(rowcol);
     }
     
     public void setGameRoot(String root)
@@ -92,7 +92,7 @@ public class ClientPlayer {
     
     public void sendDataToServer(String operationCode)
     {
-        ps.println(operationCode);
+        printStream.println(operationCode);
     }
 
 //    public String ReadPlayMoveFromserver() {
@@ -109,7 +109,7 @@ public class ClientPlayer {
     public String ReadDataFromServer() {
         String msg = null;
         try {
-            msg = dis.readLine();
+            msg = inputStream.readLine();
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -158,29 +158,35 @@ public class ClientPlayer {
 //            }
             case "04": // go to game
             {
+                System.out.println(msg);
                   this.setGameRoot("game");
+                  this.clientSymbol = msg.substring(2, 3);
+                  if(msg.substring(3, 4).equals("1"))
+                  {
+                      this.turn = true;
+                  }
+                  else
+                  {
+                      this.turn = false;
+                  }
                   break;
             }
-            case "0S":
+            case "0S": // draw player move 
+                System.out.println(msg);
                 gridPaneButtons.getChildren().get(Character.getNumericValue(msg.charAt(3))).setDisable(true);
                 Button temp = (Button) gridPaneButtons.getChildren().get(Character.getNumericValue(msg.charAt(3)));
                 String s = Character.toString(msg.charAt(2));
-//                Platform.runLater(new Runnable() {
-//                    @Override
-//                    public void run() {
-                       temp.setText(s);
-//                    }
-//                });
+                temp.setText(s);
+                 if(!msg.substring(2, 3).equals(this.clientSymbol))
+                  {
+                      this.turn = true;
+                  }
+                 
                 break;
             case "0M":
-             //   Platform.runLater(new Runnable() {
-            //        @Override
-             //       public void run() {
-                        //System.out.println(input);
-                        chatArea.appendText(msg.substring(2) + "\n");
-          //          }
-         //       });
-                break;
+         
+                    chatArea.appendText(msg.substring(2) + "\n");
+                    break;
             case "0T" : //every game
                 if (msg.charAt(2) == '0') {
                     symbol = "X";
@@ -189,7 +195,6 @@ public class ClientPlayer {
                 }
                 break;
             case "0N" ://one time
-//                System.out.println(input.charAt(1));
                 if (msg.charAt(2) == '0') {
                     clientSymbol = "X";
                 } else {

@@ -2,7 +2,10 @@ package tictactoe;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -56,6 +59,17 @@ public class StartGameMenuBase extends BorderPane {
                 @Override
                 public void handle(ActionEvent event) {
                      client.sendDataToServer("03"+"1");  //03 start new game  1 for 2 player
+//                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                     alert.setTitle("wating another player");  
+//                     alert.setContentText("");
+//                     alert.setHeaderText("");
+//                     alert.setWidth(200);
+//                     alert.setHeight(200);
+//                  //   alert.
+//                     Image image = new Image("file:./src/tictactoe/img/loading.jpg", 200, 200, false, true);
+//                     ImageView imageView = new ImageView(image);
+//                     alert.setGraphic(imageView);
+//                     alert.showAndWait();
                 }
             });
 

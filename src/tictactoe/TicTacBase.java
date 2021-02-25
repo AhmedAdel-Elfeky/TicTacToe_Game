@@ -963,11 +963,11 @@ public class TicTacBase extends BorderPane {
                     int x = gridPane.getRowIndex(item);
                     int y = gridPane.getColumnIndex(item);
                     int buttonPosition = y + x * 3;
-                    System.out.println(buttonPosition);
-                    System.out.println(client.clientSymbol);
-                    System.out.println(client.symbol);
-                    if(client.clientSymbol == client.symbol)
-                        client.sendDataToServer("0S"+client.symbol+buttonPosition);               
+                    if(client.turn == true)
+                    {
+                        client.turn = false;
+                        client.sendDataToServer("0S"+client.clientSymbol+buttonPosition);                              
+                    }
                 }
             });
         });

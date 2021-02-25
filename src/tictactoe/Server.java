@@ -13,7 +13,6 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
-
 /**
  *
  * @author Nihal , ahmed adel
@@ -62,7 +61,6 @@ class ServerHandler extends Thread {
     static volatile int waitingPlayerId = 0 ;
     public volatile String msgFromClient = "";
     
-    //nihal
     static int symbol = 0;
     static int turn = 0;
     
@@ -160,10 +158,11 @@ class ServerHandler extends Thread {
                             Game game = new Game(waitingPlayerId,this.reliableId);
                             game.gameId = Server.dBase.addNewGame(game.getGameDate());
                             runningGames.put(game.gameId, game);
-                            clients.get(waitingPlayerId).outStream.println("04");
+                            clients.get(waitingPlayerId).outStream.println("04"+"X"+"1");
                             clients.get(waitingPlayerId).gameID = game.gameId;
                             this.gameID = game.gameId;
-                            this.outStream.println("04");
+                            this.outStream.println("04"+"O"+"0");
+                            
                             waitingPlayerId = 0;
                         }
                     }
@@ -173,6 +172,21 @@ class ServerHandler extends Thread {
                 {
                     
                 }
+                break;
+            }
+            case "0S":
+            {
+//                if(this.reliableId == runningGames.get(gameID).playerOneId)
+//                {
+                    clients.get(runningGames.get(this.gameID).playerOneId).outStream.println(msg);
+                    clients.get(runningGames.get(this.gameID).playerwoId).outStream.println(msg);
+//                }
+//                else
+//                {
+//                    clients.get(runningGames.get(this.gameID).playerOneId).outStream.println("0S"+msg.substring(2,3)+msg.substring(3,4)+"1");
+//                    clients.get(runningGames.get(this.gameID).playerwoId).outStream.println("0S"+msg.substring(2,3)+msg.substring(3,4)+"0");
+//                }
+//                
                 break;
             }
             case "S0": //sign out
