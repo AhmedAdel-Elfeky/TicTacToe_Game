@@ -6,8 +6,8 @@
 package tictactoe;
 
 /**
- *
- * @author Islam
+ *     
+ * @author Nihal
  */
 import java.net.*;
 import java.io.*;
@@ -32,12 +32,9 @@ public class ClientPlayer {
     volatile public boolean State=false;
     public volatile int trueId;
     public int falseId;
-    public volatile boolean yourTurn;
+    
+    public volatile boolean turn;
     public volatile String symbol;
-    
-    
-    //nihal
-    //volatile String symbol;
     volatile String clientSymbol;
     
     public volatile Scene gameScene;

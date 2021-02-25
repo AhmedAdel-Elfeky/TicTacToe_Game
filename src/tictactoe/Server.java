@@ -1,3 +1,9 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
 package tictactoe;
 
 import java.awt.*;
@@ -6,6 +12,12 @@ import javax.swing.*;
 import java.net.*;
 import java.io.*;
 import java.util.*;
+
+
+/**
+ *
+ * @author Nihal , ahmed adel
+ */
 
 public class Server {
 
@@ -41,8 +53,8 @@ public class Server {
 
 class ServerHandler extends Thread {
     
-    DataInputStream dis;
-    PrintStream ps;
+    DataInputStream inputStream;
+    PrintStream outStream;
     int unreliableId;
     volatile int reliableId;
     volatile boolean grantAcssesState = false;
@@ -64,15 +76,15 @@ class ServerHandler extends Thread {
     public ServerHandler(Socket cs, int unauthorizedId) {
         try 
         {
-            dis = new DataInputStream(cs.getInputStream());
-            ps = new PrintStream(cs.getOutputStream());
+            inputStream = new DataInputStream(cs.getInputStream());
+            outStream = new PrintStream(cs.getOutputStream());
             unreliableId = unauthorizedId;
             unauthorizedClientsVector.add(this);
             
             // unauthorizedClientsVector.forEach(action);
-            ps.println("00"+"0"+unreliableId); //00 auth  0 unauthorized 
+            outStream.println("00"+"0"+unreliableId); //00 auth  0 unauthorized 
              if (symbol == 0) {
-               // System.out.println("tictactoe.ServerHandler.<iiiiinit>()");
+                // System.out.println("tictactoe.ServerHandler.<iiiiinit>()");
                 symbol = 1;
             } else {
                // System.out.println("tictactoe.ServerHandler.<iniiiiiiiiiiiiit>()");
@@ -89,7 +101,7 @@ class ServerHandler extends Thread {
     public void run() { //this functio run when the server recieve new data
         while (true) {
             try {
-                msgFromClient = dis.readLine();
+                msgFromClient = inputStream.readLine();
                 ParseDataFromClients(msgFromClient);
                 //System.out.println(str);
                // sendMessageToAll(str);
@@ -126,7 +138,7 @@ class ServerHandler extends Thread {
                 if(authResult != -1)
                 {
                     this.reliableId = authResult;
-                    this.ps.println("00"+"1"+authResult);
+                    this.outStream.println("00"+"1"+authResult);
                     clientsVector.add(this);
                     clients.put(this.reliableId,this);
                     unauthorizedClientsVector.remove(this);
@@ -148,10 +160,10 @@ class ServerHandler extends Thread {
                             Game game = new Game(waitingPlayerId,this.reliableId);
                             game.gameId = Server.dBase.addNewGame(game.getGameDate());
                             runningGames.put(game.gameId, game);
-                            clients.get(waitingPlayerId).ps.println("04");
+                            clients.get(waitingPlayerId).outStream.println("04");
                             clients.get(waitingPlayerId).gameID = game.gameId;
                             this.gameID = game.gameId;
-                            this.ps.println("04");
+                            this.outStream.println("04");
                             waitingPlayerId = 0;
                         }
                     }
@@ -178,7 +190,7 @@ class ServerHandler extends Thread {
     void sendMessageToAll(String st) {
         for (ServerHandler ch : clientsVector) {
             try {
-                ch.ps.println(st);
+                ch.outStream.println(st);
             } catch (Exception ex) {
                 ex.printStackTrace();
 
