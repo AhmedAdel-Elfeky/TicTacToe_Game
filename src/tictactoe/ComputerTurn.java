@@ -14,208 +14,203 @@ package tictactoe;
 
 public class ComputerTurn
 {
-	static final String player = "X";
-	static final String opponent = "O";
-	
-	class Move
-	{
-		int row; 
-		int col; 
-	};
+static class Move
+{
+	int row, col;
+};
 
+static String player = "O", opponent = "X";
 
-	private static Boolean isMovesLeft(String board[][])
+// This function returns true if there are moves
+// remaining on the board. It returns false if
+// there are no moves left to play.
+static Boolean isMovesLeft(String board[][])
+{
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			if (board[i][j] == "")
+				return true;
+	return false;
+}
+
+// This is the evaluation function as discussed
+// in the previous article ( http://goo.gl/sJgv68 )
+static int evaluate(String b[][])
+{
+	// Checking for Rows for X or O victory.
+	for (int row = 0; row < 3; row++)
 	{
-		for (int rowCntr = 0; rowCntr < 3; rowCntr++)
+		if (b[row][0].equals( b[row][1]) &&
+			b[row][1].equals(b[row][2]))
 		{
-			for (int colCntr = 0; colCntr < 3; colCntr++)
-			{
-				if (board[rowCntr][colCntr] == "")
-					return true;
-			}
+			if (b[row][0].equals(player))
+				return +10;
+			else if (b[row][0].equals(opponent))
+				return -10;
 		}
-		return false;
 	}
 
-	/**********************************************************
-		This is the evaluation function as discussed
-	    in the previous article ( http://goo.gl/sJgv68 )
-	**********************************************************/
-	public static int evaluate(String board[][])
+	// Checking for Columns for X or O victory.
+	for (int col = 0; col < 3; col++)
 	{
-		// Checking for Rows for X or O victory.
-		for (int rowCntr = 0; rowCntr < 3; rowCntr++)
+		if (b[0][col].equals(b[1][col]) &&
+			b[1][col].equals(b[2][col]))
 		{
-			if (board[rowCntr][0] ==board[rowCntr][1] &&
-				board[rowCntr][1] == board[rowCntr][2])
-			{
-				if (board[rowCntr][0] == player)
-					return +10;
-				else if (board[rowCntr][0] == opponent)
-					return -10;
-			}
-		}
-
-		// Checking for Columns for X or O victory.
-		for (int colCntr = 0; colCntr < 3; colCntr++)
-		{
-			if (board[0][colCntr] == board[1][colCntr] &&
-				board[1][colCntr] == board[2][colCntr])
-			{
-				if (board[0][colCntr] == player)
-					return +10;
-				
-				else if (board[0][colCntr] == opponent)
-					return -10;
-			}
-		}
-
-		// Checking for Diagonals for X or O victory.
-		if (board[0][0] == board[1][1] && board[1][1] == board[2][2])
-		{
-			if (board[0][0] == player)
+			if (b[0][col].equals(player))
 				return +10;
-			else if (board[0][0] == opponent)
+
+			else if (b[0][col].equals(opponent))
 				return -10;
 		}
- 
-		if (board[0][2] == board[1][1] && board[1][1] == board[2][0])
-		{
-			if (board[0][2] == player)
-				return +10;
-			else if (board[0][2] == opponent)
-				return -10;
-		}
+	}
 
-		// Else if none of them have won then return 0
+	// Checking for Diagonals for X or O victory.
+	if (b[0][0].equals(b[1][1]) && b[1][1].equals(b[2][2]))
+	{
+		if (b[0][0].equals(player))
+			return +10;
+		else if (b[0][0].equals(opponent))
+			return -10;
+	}
+
+	if (b[0][2].equals(b[1][1]) && b[1][1].equals(b[2][0]))
+	{
+		if (b[0][2].equals(player))
+			return +10;
+		else if (b[0][2].equals(opponent))
+			return -10;
+	}
+
+	// Else if none of them have won then return 0
+	return 0;
+}
+
+// This is the minimax function. It considers all
+// the possible ways the game can go and returns
+// the value of the board
+static int minimax(String board[][], 
+					int depth, Boolean isMax)
+{
+	int score = evaluate(board);
+
+	// If Maximizer has won the game 
+	// return his/her evaluated score
+	if (score == 10)
+		return score;
+
+	// If Minimizer has won the game 
+	// return his/her evaluated score
+	if (score == -10)
+		return score;
+
+	// If there are no more moves and 
+	// no winner then it is a tie
+	if (isMovesLeft(board) == false)
 		return 0;
-	}
 
-	/*******************************************************************
-		This is the minimax function. It considers all
-		the possible ways the game can go and returns
-		the value of the board
-	*******************************************************************/
-	private static int minimax(String board[][],int depth, Boolean isMax)
+	// If this maximizer's move
+	if (isMax)
 	{
-		int score = evaluate(board);
-		if (score == 10)
-			return score;
+		int best = -1000;
 
-		// If Minimizer has won the game 
-		// return his/her evaluated score
-		if (score == -10)
-			return score;
-
-		// If there are no more moves and 
-		// no winner then it is a tie
-		if (isMovesLeft(board) == false)
-			return 0;
-
-		// If this maximizer's move
-		if (isMax)
+		// Traverse all cells
+		for (int i = 0; i < 3; i++)
 		{
-			int best = -1000;
-
-			// Traverse all cells
-			for (int rowCntr = 0; rowCntr < 3; rowCntr++)
-			{
-				for (int colCntr = 0; colCntr < 3; colCntr++)
-				{
-					// Check if cell is empty
-					if (board[rowCntr][colCntr]=="")
-					{
-						// Make the move
-						board[rowCntr][colCntr] = player;
-
-						// Call minimax recursively and choose
-						// the maximum value
-						best = Math.max(best, minimax(board, 
-										depth + 1, !isMax));
-
-						// Undo the move
-						board[rowCntr][colCntr] = "";
-					}
-				}
-			}
-			return best;
-		}
-
-		// If this minimizer's move
-		else
-		{
-			int best = 1000;
-
-			// Traverse all cells
-			for (int rowCntr = 0; rowCntr < 3; rowCntr++)
-			{
-				for (int colCntr = 0; colCntr < 3; colCntr++)
-				{
-					// Check if cell is empty
-					if (board[rowCntr][colCntr] == "")
-					{
-						// Make the move
-						board[rowCntr][colCntr] = opponent;
-
-						// Call minimax recursively and choose
-						// the minimum value
-						best = Math.min(best, minimax(board, 
-										depth + 1, !isMax));
-
-						// Undo the move
-						board[rowCntr][colCntr] = "";
-					}
-				}
-			}
-			return best;
-		}
-	}
-
-	/*****************************************************
-		This will return the best possible
-	    move for the player
-	*****************************************************/
-	public Move findBestMove(String board[][])
-	{
-		int bestVal = -1000;
-		Move bestMove = new Move();
-		bestMove.row = -1;
-		bestMove.col = -1;
-
-		// Traverse all cells, evaluate minimax function 
-		// for all empty cells. And return the cell 
-		// with optimal value.
-		for (int rowCntr = 0; rowCntr < 3; rowCntr++)
-		{
-			for (int colCntr = 0; colCntr < 3; colCntr++)
+			for (int j = 0; j < 3; j++)
 			{
 				// Check if cell is empty
-				if (board[rowCntr][colCntr] == "")
+				if (board[i][j].equals(""))
 				{
 					// Make the move
-					board[rowCntr][colCntr] = opponent;
+					board[i][j]=player;
 
-					// compute evaluation function for this
-					// move.
-					int moveVal = minimax(board,7, false);
+					// Call minimax recursively and choose
+					// the maximum value
+					best = Math.max(best, minimax(board, 
+									depth + 1, !isMax));
 
 					// Undo the move
-					board[rowCntr][colCntr] = "";
-
-					// If the value of the current move is
-					// more than the best value, then update
-					// best/
-					if (moveVal > bestVal)
-					{
-						bestMove.row = rowCntr;
-						bestMove.col = colCntr;
-						bestVal = moveVal;
-					}
+					board[i][j] = "";
 				}
 			}
 		}
-		return bestMove;
+		return best;
 	}
+
+	// If this minimizer's move
+	else
+	{
+		int best = 1000;
+
+		// Traverse all cells
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				// Check if cell is empty
+				if (board[i][j].equals(""))
+				{
+					// Make the move
+					board[i][j] = opponent;
+
+					// Call minimax recursively and choose
+					// the minimum value
+					best = Math.min(best, minimax(board, 
+									depth + 1, !isMax));
+
+					// Undo the move
+					board[i][j] = "";
+				}
+			}
+		}
+		return best;
+	}
+}
+
+// This will return the best possible
+// move for the player
+static Move findBestMove(String board[][])
+{
+	int bestVal = -1000;
+	Move bestMove = new Move();
+	bestMove.row = -1;
+	bestMove.col = -1;
+
+	// Traverse all cells, evaluate minimax function 
+	// for all empty cells. And return the cell 
+	// with optimal value.
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			// Check if cell is empty
+			if (board[i][j].equals(""))
+			{
+				// Make the move
+				board[i][j] = player;
+
+				// compute evaluation function for this
+				// move.
+				int moveVal = minimax(board, 0, false);
+
+				// Undo the move
+				board[i][j] = "";
+
+				// If the value of the current move is
+				// more than the best value, then update
+				// best/
+				if (moveVal > bestVal)
+				{
+					bestMove.row = i;
+					bestMove.col = j;
+					bestVal = moveVal;
+				}
+			}
+		}
+	}
+	return bestMove;
+}
+
 
 }
 
