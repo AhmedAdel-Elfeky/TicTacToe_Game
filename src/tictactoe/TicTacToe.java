@@ -27,20 +27,23 @@ import javafx.scene.layout.Pane;
 public class TicTacToe extends Application {
     Stage primaryStage;
     public ClientPlayer client = new ClientPlayer();
-    LoginPageBase loginRoot;
+    LoginRegPageBase loginRoot;
     TicTacBase boardGame = new TicTacBase(client);
+    IntroPageBase intoRoot;
     Scene scene;
     @Override
     public void start(Stage primary) {
         primaryStage = primary;
-        loginRoot = new LoginPageBase(client);
-        scene = new Scene(loginRoot, 950, 530);
+        loginRoot = new LoginRegPageBase(client);
+        scene = new Scene(loginRoot, 900, 700);
         StartGameMenuBase startGameRoot = new StartGameMenuBase(client);
-        client.setClientRootsAndScene(scene, loginRoot, boardGame , startGameRoot);
+        intoRoot = new IntroPageBase(client);
+        client.setClientRootsAndScene(scene, loginRoot, boardGame , startGameRoot,intoRoot);
         
         loginRoot.getStyleClass().add("root");
         primaryStage.setTitle("TicTaacToe");
         primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
     

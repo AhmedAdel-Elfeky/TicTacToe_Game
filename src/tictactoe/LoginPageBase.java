@@ -225,10 +225,6 @@ public class LoginPageBase extends BorderPane {
         this.password = userPassword; 
         this.avatarId = avatar;
     }
-    
-//    public void setClient(ClientPlayer c)
-//    {
-//        client = c;
-//    }
+
     
 }

@@ -95,8 +95,8 @@ public class Game {
             }
         }
         if (avl_places == 0) {
-            return "Draw";
+            return "d";
         }
-        return "";
+        return "_";
     }
 }

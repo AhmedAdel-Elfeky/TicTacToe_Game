@@ -16,11 +16,11 @@ public class DataBase {
     PreparedStatement ls;
     PreparedStatement dr;
     PreparedStatement ur;
-    final static String URL = "jdbc:postgresql://localhost:5432/tictac";
+    final static String URL = "jdbc:postgresql://localhost:5432/tic_tac_toe";
 
     public DataBase() {
         try {
-            c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/tictac", "postgres", "lilhack");
+            c = DriverManager.getConnection(URL, "postgres", "postgres");
         } catch (SQLException e) {
             e.printStackTrace();
             try {
@@ -39,7 +39,7 @@ public class DataBase {
         PreparedStatement statment;
         int player_id;
         try {
-            statment = c.prepareStatement(" select id , name  , pass from player where name= ? and pass = ?; ",
+            statment = c.prepareStatement(" select player_id , player_name d , password from players where player_name= ? and password = ?; ",
                     ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
             statment.setString(1, name);
             statment.setString(2, pass);
@@ -65,14 +65,14 @@ public class DataBase {
         int player_id;
         try {
 
-            statment = c.prepareStatement(" select count(name) from player where name= ?;",
+            statment = c.prepareStatement(" select count(player_name) counter from players where player_name= ?;",
                     ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
             statment.setString(1, name);
             result = statment.executeQuery();
 
             if (result.next()) {
                 if (result.getInt(1) == 0) {
-                    statment = c.prepareStatement("insert into player (name,pass) values (?,?)",
+                    statment = c.prepareStatement("insert into players (player_name,password) values (?,?)",
                             ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
                     statment.setString(1, name);
                     statment.setString(2, pass);
@@ -100,13 +100,13 @@ public class DataBase {
         int id=-1;
         try {
                 Date gDate=Date.valueOf(gameDate);//converting string into sql date 
-                statment = c.prepareStatement("insert into match (mdate) values (?)",
+                statment = c.prepareStatement("insert into matches (match_date) values (?)",
                         ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
                
                 statment.setDate(1, gDate);
                 statment.executeUpdate();
                 
-                statment = c.prepareStatement("select max(match_id) from match;",
+                statment = c.prepareStatement("select max(match_id) from matches;",
                         ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
                 result = statment.executeQuery();
                 while ( result.next() )
