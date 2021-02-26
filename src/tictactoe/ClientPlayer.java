@@ -6,8 +6,8 @@
 package tictactoe;
 
 /**
- *     
- * @author Nihal
+ *
+ * @author Islam
  */
 import java.net.*;
 import java.io.*;
@@ -23,25 +23,24 @@ import javafx.scene.layout.GridPane;
 public class ClientPlayer {
 
     public Socket mySocket;
-    public DataInputStream inputStream;
-    public PrintStream printStream;
+    public DataInputStream dis;
+    public PrintStream ps;
     public Thread th1;
-   
+
     public volatile String msgFromServer = "";
-   
-    volatile public boolean State=false;
+
+    volatile public boolean State = false;
     public volatile int trueId;
     public int falseId;
-    
-    public volatile boolean turn;
+    public volatile boolean yourTurn;
     public volatile String symbol;
-    volatile String clientSymbol;
-    
+    public volatile String clientSymbol;
+    public volatile boolean aiGame=false;
     public volatile Scene gameScene;
     public TicTacBase gameRoot;
     public LoginPageBase loginRoot;
     public Button[][] gridButtons;
-    public TextArea chatArea; 
+    public TextArea chatArea;
     public GridPane gridPaneButtons;
     public StartGameMenuBase startGame;
 
@@ -49,28 +48,26 @@ public class ClientPlayer {
 
         try {
             mySocket = new Socket("127.0.0.1", 5005);
-            inputStream = new DataInputStream(mySocket.getInputStream());
-            printStream = new PrintStream(mySocket.getOutputStream());
+            dis = new DataInputStream(mySocket.getInputStream());
+            ps = new PrintStream(mySocket.getOutputStream());
             th1 = new ThreadOne();
             th1.start();
-       
+
         } catch (IOException ex) {
             System.out.println("The Serve is Down, you can't open the game");
             ex.printStackTrace();
-             System.exit(0);	
+            System.exit(0);
         }
 
     }
 
     public void sendPlayMoveToserver(String rowcol) {
-        printStream.println(rowcol);
+        ps.println(rowcol);
     }
-    
-    public void setGameRoot(String root)
-    {
-        switch(root)
-        {
-            case "login": 
+
+    public void setGameRoot(String root) {
+        switch (root) {
+            case "login":
                 this.gameScene.setRoot(loginRoot);
                 break;
             case "startGame":
@@ -81,35 +78,22 @@ public class ClientPlayer {
                 break;
         }
     }
-    
-    public void setClientRootsAndScene(Scene s,LoginPageBase l ,TicTacBase g,StartGameMenuBase st)
-    {
+
+    public void setClientRootsAndScene(Scene s, LoginPageBase l, TicTacBase g, StartGameMenuBase st) {
         this.gameScene = s;
         this.gameRoot = g;
         this.loginRoot = l;
         this.startGame = st;
     }
-    
-    public void sendDataToServer(String operationCode)
-    {
-        printStream.println(operationCode);
+
+    public void sendDataToServer(String operationCode) {
+        ps.println(operationCode);
     }
 
-//    public String ReadPlayMoveFromserver() {
-//        String msg = null;
-//        try {
-//            msg = dis.readLine();
-//
-//        } catch (IOException ex) {
-//            ex.printStackTrace();
-//        }
-//        return msg;
-//    }
-    
     public String ReadDataFromServer() {
         String msg = null;
         try {
-            msg = inputStream.readLine();
+            msg = dis.readLine();
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -124,95 +108,75 @@ public class ClientPlayer {
     public void DrawRecievedData(String msg) {
         int row, col;
         String f1 = msg.substring(0, 2);
-  
-        switch(f1)
-        {
+
+        switch (f1) {
             case "00": // login
             {
-                if("0".equals(msg.substring(2,3)))
-                {
-                    this.falseId = Integer.parseInt(msg.substring(3,4));
-                    this.State= false;
+                if ("0".equals(msg.substring(2, 3))) {
+                    this.falseId = Integer.parseInt(msg.substring(3, 4));
+                    this.State = false;
                     System.out.println(falseId);
                     System.out.println(State);
-                }
-                else
-                {
-                    this.trueId = Integer.parseInt(msg.substring(3,4));
+                } else {
+                    this.trueId = Integer.parseInt(msg.substring(3, 4));
                     this.State = true;
                     System.out.println(this.trueId);
-                    System.out.println( this.State);
+                    System.out.println(this.State);
                     this.setGameRoot("startGame");
                 }
                 System.out.println(msg);
-                
+
                 break;
             }
-//            case "01":
-//            {
-//                  if(Integer.parseInt(msg.substring(2)) != -1)
-//                  {
-//
-//                  }
-//                  break;
-//            }
+
             case "04": // go to game
             {
-                System.out.println(msg);
-                  this.setGameRoot("game");
-                  this.clientSymbol = msg.substring(2, 3);
-                  if(msg.substring(3, 4).equals("1"))
-                  {
-                      this.turn = true;
-                  }
-                  else
-                  {
-                      this.turn = false;
-                  }
-                  break;
+                this.setGameRoot("game");
+                if (msg.charAt(2) == '0') {
+                    clientSymbol = "X";
+                    yourTurn=true;
+                } else {
+                    clientSymbol = "O";
+                    yourTurn=false;
+                }
+                if (msg.charAt(3) == 'I') {
+                aiGame=true;
+                }
+                break;
             }
-            case "0S": // draw player move 
-                System.out.println(msg);
+            
+            case "0S":
                 gridPaneButtons.getChildren().get(Character.getNumericValue(msg.charAt(3))).setDisable(true);
                 Button temp = (Button) gridPaneButtons.getChildren().get(Character.getNumericValue(msg.charAt(3)));
                 String s = Character.toString(msg.charAt(2));
                 temp.setText(s);
-                 if(!msg.substring(2, 3).equals(this.clientSymbol))
-                  {
-                      this.turn = true;
-                  }
-                 
+                if(!s.equals(clientSymbol))
+                    yourTurn=true;
                 break;
             case "0M":
-         
-                    chatArea.appendText(msg.substring(2) + "\n");
-                    break;
-            case "0T" : //every game
-                if (msg.charAt(2) == '0') {
-                    symbol = "X";
-                } else {
-                    symbol = "O";
+                chatArea.appendText(msg.substring(2) + "\n");
+                break;
+ 
+            case "sd":
+                String resualt = Character.toString(msg.charAt(2));
+                gridPaneButtons.getChildren().forEach(item->item.setDisable(true));
+                if(clientSymbol.equals(resualt))
+                {
+                   //i win 
+                }
+                else if("d".equals(resualt))
+                {
+                //draw
+                }
+                else 
+                {
+                    // i lose 
                 }
                 break;
-            case "0N" ://one time
-                if (msg.charAt(2) == '0') {
-                    clientSymbol = "X";
-                } else {
-                    clientSymbol = "O";
-                }
-                break;
-            default:
-            {
-                
+            default: {
+
             }
         }
-//        row = Integer.parseInt(f1);
-//        System.out.println(row);
-//        f1 = msg.substring(1);
-//        col = Integer.parseInt(f1);
-//        System.out.println(col);
-//        this.gridButtons[row][col].setText("x");
-//        this.gridButtons[row][col].setDisable(true);
     }
 
     class ThreadOne extends Thread {
@@ -236,57 +200,3 @@ public class ClientPlayer {
         }
     }
 }
-    
-    
-/*
- public void run() 
-    {
-        while (true) {
-
-            try {
-                msgFromServer = dis.readLine();
-                Thread.sleep(1000);
-                root.gridPane.getChildren().forEach(item -> {
-                    if (root.gridPane.getRowIndex(item) == Integer.parseInt(msgFromServer.charAt(0)+"") && root.gridPane.getColumnIndex(item) ==Integer.parseInt(msgFromServer.charAt(1)+"") )
-                    {
-                        root.board[Integer.parseInt(msgFromServer.charAt(0)+"")][Integer.parseInt(msgFromServer.charAt(1)+"")] = "X";
-                        ((Button) item).setText("X");
-                    }
-                });
-            } catch (Exception e) {
-                System.out.println("Server is offline");
-                System.exit(0);
-                break;
-            }
-
-        }
-    }
-
- */
-
- /*
-public ClientPlayer(TicTacBase r) {
-        root = r;
-        try {
-            mySocket = new Socket("127.0.0.1", 5005);
-            dis = new DataInputStream(mySocket.getInputStream());
-            ps = new PrintStream(mySocket.getOutputStream());
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        root.gridPane.getChildren().forEach(item -> {
-            item.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) 
-                {
-                    ps.println(GridPane.getRowIndex(item) + "" + GridPane.getColumnIndex(item));
-                    ((Button) item).setText("X");
-
-                }
-            });
-        });
-        Thread th1 = new Thread(this);
-        th1.start();
-    }
- */

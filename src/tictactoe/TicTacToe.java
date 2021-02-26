@@ -38,33 +38,12 @@ public class TicTacToe extends Application {
         StartGameMenuBase startGameRoot = new StartGameMenuBase(client);
         client.setClientRootsAndScene(scene, loginRoot, boardGame , startGameRoot);
         
-        //String css = this.getClass().getResource("mycss.css").toExternalForm();
-       // scene.getStylesheets().add(css);
         loginRoot.getStyleClass().add("root");
         primaryStage.setTitle("TicTaacToe");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
     
-     
-    
-//     public static void switchScenes (int sceneNumber)
-//    {
-//        if(sceneNumber == 1)
-//        {
-//            LoginPageBase root = new LoginPageBase();
-//            root.setClient(client);
-//            Scene scene = new Scene(root, 800, 420);
-//            primaryStage.setScene(scene);
-//        }
-//        else if(sceneNumber == 2)
-//        {
-//            TicTacBase root = new TicTacBase();
-//            Scene scene = new Scene(root, 800, 420);
-//            primaryStage.setScene(scene);
-//        }
-//    }
-
     /**
      * @param args the command line arguments
      */
