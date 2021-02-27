@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="900.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="189.0" layoutY="64.0" prefHeight="101.0" prefWidth="519.0" style="-fx-background-color: black; -fx-region-background: black;" text="Waiting for another player..." textFill="#fff9f9">
+         <font>
+            <Font name="Jokerman" size="35.0" />
+         </font>
+         <effect>
+            <DropShadow color="#b8005f" height="199.65" radius="60.595" spread="0.67" width="44.73" />
+         </effect>
+      </Label>
+      <Button layoutX="344.0" layoutY="522.0" mnemonicParsing="false" prefHeight="94.0" prefWidth="226.0" style="-fx-background-color: black; -fx-border-color: white; -fx-border-radius: 100; -fx-background-radius: 100;" text="Cancel" textFill="WHITE">
+         <font>
+            <Font name="Jokerman" size="46.0" />
+         </font>
+         <effect>
+            <DropShadow color="#ff0099" height="56.58" radius="27.049999999999997" spread="0.38" width="53.62" />
+         </effect>
+      </Button>
+      <ImageView fitHeight="305.0" fitWidth="537.0" layoutX="192.0" layoutY="187.0" pickOnBounds="true" preserveRatio="true" />
+   </children>
+</Pane>

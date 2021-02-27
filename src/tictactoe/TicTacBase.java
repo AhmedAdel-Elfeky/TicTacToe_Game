@@ -654,12 +654,17 @@ public class TicTacBase extends BorderPane {
 package tictactoe;
 
 import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.InnerShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
@@ -667,6 +672,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 
 public  class TicTacBase extends BorderPane {
 
@@ -725,9 +732,13 @@ public  class TicTacBase extends BorderPane {
     protected final DropShadow dropShadow10;
     protected final Button button10;
     protected final DropShadow dropShadow11;
-    public volatile int x, y;
+    
+    Image image1 = null;
+    ImageView imageView1 = null;
+    Image image2 = null;
+    ImageView imageView2 = null;
 
-    public TicTacBase(ClientPlayer client) {
+    public TicTacBase(ClientPlayer client,String img1Path,String img2Path) {
 
         pane = new Pane();
         gridPane = new GridPane();
@@ -784,7 +795,23 @@ public  class TicTacBase extends BorderPane {
         dropShadow10 = new DropShadow();
         button10 = new Button();
         dropShadow11 = new DropShadow();
+        
+      ButtonType ok = new ButtonType("Ok", ButtonData.OK_DONE);
+      ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+      Alert alert = new Alert(Alert.AlertType.NONE,"Promote pawn to:",ok,cancel);
+      alert.setTitle("Quit!!");
+      alert.setContentText("you will LOSE if you QUIT ... ok?");
 
+         try {
+            image1 = new Image(img1Path,120, 90, false, true);
+            imageView1 = new ImageView(image1);
+            image2 = new Image(img2Path, 120, 90, false, true);
+            imageView2 = new ImageView(image2);
+         
+        } catch (Exception p) {
+            p.printStackTrace();
+        }
+                
         setMaxHeight(USE_PREF_SIZE);
         setMaxWidth(USE_PREF_SIZE);
         setMinHeight(USE_PREF_SIZE);
@@ -1005,7 +1032,7 @@ public  class TicTacBase extends BorderPane {
         label.setPrefHeight(142.0);
         label.setPrefWidth(150.0);
         label.setStyle("-fx-background-radius: 100; -fx-border-color: white; -fx-border-radius: 100; -fx-padding: 5; -fx-label-padding: 20; -fx-border-width: 5;");
-
+        label.setGraphic(imageView2);
         dropShadow0.setColor(javafx.scene.paint.Color.valueOf("#a731a7"));
         dropShadow0.setHeight(30.47);
         dropShadow0.setRadius(14.75);
@@ -1046,7 +1073,7 @@ public  class TicTacBase extends BorderPane {
         label2.setPrefHeight(142.0);
         label2.setPrefWidth(146.0);
         label2.setStyle("-fx-background-radius: 100; -fx-border-color: white; -fx-border-radius: 100; -fx-padding: 5; -fx-label-padding: 20; -fx-border-width: 5;");
-
+        label2.setGraphic(imageView1);
         dropShadow3.setColor(javafx.scene.paint.Color.valueOf("#b2a1a1ed"));
         dropShadow3.setHeight(30.53);
         dropShadow3.setRadius(14.765);
@@ -1167,7 +1194,11 @@ public  class TicTacBase extends BorderPane {
         button8.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                client.sendDataToServer("0M"+textField.getText());
+                if(textField.getText() != "")
+                {
+                    client.sendDataToServer("0M"+client.playerName+": "+textField.getText());
+                    textField.setText("");
+                }
             }
         });
 
@@ -1223,7 +1254,18 @@ public  class TicTacBase extends BorderPane {
                     button9.setEffect(null);
                     }   
             });
-       // setRight(pane1);
+        button9.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                   
+                alert.showAndWait().ifPresent(response -> {
+                if (response == ok) {
+                    client.setGameRoot("startGame");
+                } 
+});
+                    }   
+            });
+        
 
         button10.setAccessibleRole(javafx.scene.AccessibleRole.TOGGLE_BUTTON);
         button10.setLayoutX(133.0);
@@ -1287,6 +1329,9 @@ public  class TicTacBase extends BorderPane {
         pane1.getChildren().add(button8);
         pane1.getChildren().add(button9);
         pane1.getChildren().add(button10);
+        pane1.getChildren().add(imageView1);
+        pane1.getChildren().add(imageView2);
+        
         client.gridPaneButtons = gridPane;
         Button[][] ButtonsArray = { {button,button0,button1}
                                    ,{button2,button3,button4}

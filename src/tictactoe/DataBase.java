@@ -33,21 +33,24 @@ public class DataBase {
         }
     }
 
-    public int checkLoginUser(String name, String pass) {
+    public PlayerInformation checkLoginUser(String name, String pass) {
 
         ResultSet result;
         PreparedStatement statment;
         int player_id;
+        PlayerInformation inf=new PlayerInformation();
         try {
-            statment = c.prepareStatement(" select player_id , player_name d , password from players where player_name= ? and password = ?; ",
+            statment = c.prepareStatement(" select player_id , player_name d , password , avatar_id from players where player_name= ? and password = ?; ",
                     ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
             statment.setString(1, name);
             statment.setString(2, pass);
             result = statment.executeQuery();
             if (result.next()) {
-                player_id = result.getInt(1);
+                inf.playerId = result.getInt(1);
+                inf.playerName = result.getString(2);
+                inf.playerAvatar = result.getInt(4);
                 statment.close();
-                return player_id;
+                return inf;
             }
 
         } catch (Exception e) {
@@ -55,8 +58,8 @@ public class DataBase {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
-
-        return -1;
+         inf.playerId = -1;
+        return inf;
     }
 
     public int RegisterNewUser(String name, String pass, int avatarId) {
@@ -92,6 +95,32 @@ public class DataBase {
         }
         return -1;
     }
+    
+//    public String getPlayerName(int id)
+//    {
+//         ResultSet result;
+//        PreparedStatement statment;
+//        int player_id;
+//        try {
+//            statment = c.prepareStatement(" select player_id , player_name d , password from players where player_name= ? and password = ?; ",
+//                    ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
+//            statment.setString(1, name);
+//            statment.setString(2, pass);
+//            result = statment.executeQuery();
+//            if (result.next()) {
+//                player_id = result.getInt(1);
+//                statment.close();
+//                return player_id;
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+//            System.exit(0);
+//        }
+//
+//        return -1;
+//    }
     
     public int addNewGame(String gameDate )
     {

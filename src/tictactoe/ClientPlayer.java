@@ -11,6 +11,7 @@ package tictactoe;
  */
 import java.net.*;
 import java.io.*;
+import java.util.StringTokenizer;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -27,12 +28,21 @@ public class ClientPlayer {
     public DataInputStream inputStream;
     public PrintStream outStream;
     public Thread th1;
+    
+    static public String avatarsImgPaths[] = { "file:src/tictactoe/img/av1.jpg",
+                                                "file:src/tictactoe/img/av2.jpg",
+                                                "file:src/tictactoe/img/av3.jpg",
+                                                "file:src/tictactoe/img/av4.jpg",
+                                                "file:src/tictactoe/img/av5.png"};
+    
 
     public volatile String msgFromServer = "";
 
     volatile public boolean State = false;
     public volatile int trueId;
     public int falseId;
+    public String playerName="";
+    public int avatarId;
     public volatile boolean turn;
     public volatile String symbol;
     public volatile String clientSymbol;
@@ -45,13 +55,15 @@ public class ClientPlayer {
     public GridPane gridPaneButtons;
     public StartGameMenuBase startGame;
     public IntroPageBase intoRoot;
+    public WaitingPageBase waitRoot;
     
     public Label warningMessage;
 
     public ClientPlayer() {
 
         try {
-            mySocket = new Socket("127.0.0.1", 5005);
+            //mySocket = new Socket("127.0.0.1", 5005);
+            mySocket = new Socket("41.37.232.20", 49000,InetAddress.getLocalHost(),49000);
             inputStream = new DataInputStream(mySocket.getInputStream());
             outStream = new PrintStream(mySocket.getOutputStream());
             th1 = new ThreadOne();
@@ -79,19 +91,27 @@ public class ClientPlayer {
                 break;
             case "startGame":
                 this.gameScene.setRoot(startGame);
-                break;
-            case "game":
-                this.gameScene.setRoot(gameRoot);
+                break;          
+            case "wait":
+                this.gameScene.setRoot(waitRoot);
                 break;
                 
         }
     }
+    
+     public void setGameRoot(String root,int path1Index,int path2Index) 
+     {       
+        gameRoot = new TicTacBase(this,avatarsImgPaths[path2Index],avatarsImgPaths[path1Index]);
+        this.gameScene.setRoot(gameRoot);    
+     }
 
-    public void setClientRootsAndScene(Scene s, LoginRegPageBase l, TicTacBase g, StartGameMenuBase st,IntroPageBase i) {
+    public void setClientRootsAndScene(Scene s, LoginRegPageBase l,  StartGameMenuBase st,IntroPageBase i,
+            WaitingPageBase w) {
         this.gameScene = s;
-        this.gameRoot = g;
+       // this.gameRoot = g;
         this.loginRoot = l;
         this.startGame = st;
+        this.waitRoot = w;
         this.intoRoot=i;
     }
 
@@ -115,9 +135,8 @@ public class ClientPlayer {
     }
 
     public void DrawRecievedData(String msg) {
-        int row, col;
         String f1 = msg.substring(0, 2);
-         System.out.println(msg);
+        System.out.println(msg);
         switch (f1) {
             case "00": // login
             {
@@ -133,14 +152,18 @@ public class ClientPlayer {
                     warningMessage.setVisible(true);
                 }
                 else {
-                    this.trueId = Integer.parseInt(msg.substring(3, 4));
+                    String temp = msg.substring(4);
+                    StringTokenizer st1 = new StringTokenizer(temp, "_"); 
+                    this.trueId = Integer.parseInt(st1.nextToken()); 
+                    this.playerName = st1.nextToken();
+                    this.avatarId =  Integer.parseInt(st1.nextToken());
                     this.State = true;
-                    warningMessage.setVisible(false);
+                    warningMessage.setVisible(false);                    
                     System.out.println(this.trueId);
+                    System.out.println(this.playerName);
                     System.out.println(this.State);
                     this.setGameRoot("into");
                 }
-                System.out.println(msg);
 
                 break;
             }
@@ -148,22 +171,42 @@ public class ClientPlayer {
             case "04": // go to game
             {
                 System.out.println(msg);
-                this.setGameRoot("game");
-                if (msg.charAt(2) == '0') {
-                    clientSymbol = "X";
-                    turn=true;
-                } else {
-                    clientSymbol = "O";
-                    turn=false;
+                if (msg.charAt(2) != 'I') 
+                {
+                    String temp = msg.substring(3);
+                    StringTokenizer st1 = new StringTokenizer(temp, "_"); 
+                    String opponentName = st1.nextToken();
+                    int oppenentAvatar = Integer.parseInt(st1.nextToken());
+                    if (msg.charAt(2) == '0') {
+                        this.setGameRoot("game",avatarId,oppenentAvatar);
+                        clientSymbol = "X";
+                        gameRoot.label3.setText(playerName);
+                        gameRoot.label5.setText(opponentName);                    
+                        turn=true;
+                    } else {
+                        this.setGameRoot("game",oppenentAvatar,avatarId);
+                        clientSymbol = "O";
+                        gameRoot.label3.setText(opponentName);
+                        gameRoot.label5.setText(playerName);                   
+                        turn=false;
+                    }
                 }
-                if (msg.charAt(2) == 'I') {
+                
+                else { // go to ai
                     aiGame=true;
                     if (msg.charAt(3) == '0') {
-                    clientSymbol = "X";
-                    turn=true;
-                    } else {
+                         this.setGameRoot("game",avatarId,4);
+                        clientSymbol = "X";
+                        turn=true;
+                        gameRoot.label3.setText(playerName);
+                        gameRoot.label5.setText("AI");
+                    } 
+                    else {
+                        this.setGameRoot("game",5,avatarId);
                         clientSymbol = "O";
                         turn=false;
+                        gameRoot.label3.setText("AI");
+                        gameRoot.label5.setText(playerName);
                     }
                         System.out.println(this.aiGame);
                     }
@@ -216,7 +259,7 @@ public class ClientPlayer {
                 break;
                 
             case "0M":
-                chatArea.appendText(msg.substring(2) + "\n");
+                gameRoot.textArea.appendText(msg.substring(2) + "\n");
                 break;
  
           

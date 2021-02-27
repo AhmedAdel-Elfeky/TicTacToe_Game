@@ -48,6 +48,7 @@ class ServerHandler extends Thread {
     private int gameID;
     static volatile int waitingPlayerId = 0;
     public volatile String msgFromClient = "";
+    public PlayerInformation pInfo = new PlayerInformation();
 
     //nihal
     static int symbol = 0;
@@ -56,6 +57,7 @@ class ServerHandler extends Thread {
     static Vector<ServerHandler> unauthorizedClientsVector = new Vector<ServerHandler>();
 
     static HashMap<Integer, ServerHandler> clients = new HashMap<Integer, ServerHandler>();
+    
     static HashMap<Integer, Game> runningGames = new HashMap<Integer, Game>();
 
     public ServerHandler(Socket cs, int unauthorizedId) {
@@ -96,10 +98,10 @@ class ServerHandler extends Thread {
                 String userName = msg.substring(5, userLength + 5);
                 int passwordLength = Integer.parseInt(msg.substring(5 + userLength, 6 + userLength));
                 String password = msg.substring(6 + userLength, passwordLength + 6 + userLength);
-                int authResult = Server.dBase.checkLoginUser(userName, password);
-                if (authResult != -1) {
-                    this.reliableId = authResult;
-                    this.outStream.println("00" + "1" + authResult);
+                pInfo = Server.dBase.checkLoginUser(userName, password);
+                if (pInfo.playerId != -1) {
+                    this.reliableId = pInfo.playerId;
+                    this.outStream.println("00_" + "1_" +pInfo.playerId +"_"+pInfo.playerName+"_"+pInfo.playerAvatar);
                     clients.put(this.reliableId, this);
                     unauthorizedClientsVector.remove(this);
                 }
@@ -120,10 +122,10 @@ class ServerHandler extends Thread {
                             Game game = new Game(waitingPlayerId, this.reliableId);
                             game.gameId = Server.dBase.addNewGame(game.getGameDate());
                             runningGames.put(game.gameId, game);
-                            clients.get(waitingPlayerId).outStream.println("040");
+                            clients.get(waitingPlayerId).outStream.println("040"+this.pInfo.playerName+"_"+this.pInfo.playerAvatar);
                             clients.get(waitingPlayerId).gameID = game.gameId;
                             this.gameID = game.gameId;
-                            this.outStream.println("041");
+                            this.outStream.println("041"+clients.get(waitingPlayerId).pInfo.playerName+"_"+clients.get(waitingPlayerId).pInfo.playerAvatar);
                             waitingPlayerId = 0;
                         }
                     }
@@ -134,8 +136,15 @@ class ServerHandler extends Thread {
                     game.gameId = Server.dBase.addNewGame(game.getGameDate());
                     runningGames.put(game.gameId, game);
                     this.gameID = game.gameId;
-                    this.outStream.println("04I0");
-                    
+                    this.outStream.println("04I0");                    
+                }
+                break;
+            }
+            case "CW": // cancel waiting
+            {
+                if(this.reliableId == waitingPlayerId)
+                {
+                    waitingPlayerId=0;
                 }
                 break;
             }
@@ -157,9 +166,17 @@ class ServerHandler extends Thread {
                 this.grantAcssesState = false;
                 break;
             }
-            case "0M": {
-                clients.get(runningGames.get(this.gameID).playerOneId).outStream.println(msg);
-                clients.get(runningGames.get(this.gameID).playerwoId).outStream.println(msg);
+            case "0M": 
+            {
+                if(runningGames.get(this.gameID).playerOneId == 1)
+                    clients.get(runningGames.get(this.gameID).playerwoId).outStream.println(msg);
+                else if(runningGames.get(this.gameID).playerwoId == 1)
+                    clients.get(runningGames.get(this.gameID).playerOneId).outStream.println(msg);
+                else
+                {
+                    clients.get(runningGames.get(this.gameID).playerOneId).outStream.println(msg);
+                    clients.get(runningGames.get(this.gameID).playerwoId).outStream.println(msg);
+                }
                 break;
             }
         }
