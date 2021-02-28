@@ -189,13 +189,13 @@ public class IntroPageBase extends BorderPane {
                  button2.setEffect(null);          
             }
         });
-//        button2.setOnMouseClicked(new EventHandler<MouseEvent>() {
-//            @Override
-//            public void handle(MouseEvent ev)
-//            {
-//                client.setGameRoot("startGame");
-//            }
-//        });
+        button2.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent ev)
+            {
+                client.setGameRoot("profile",1,1);
+            }
+        });
         setCenter(pane);
 
         pane.getChildren().add(label);

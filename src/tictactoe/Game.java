@@ -28,6 +28,8 @@ public class Game {
     public volatile String [][]gameBoard = {{"", "", ""},
     {"", "", ""},
     {"", "", ""}};
+    boolean firstPlay = true;
+    String record = "";
     public  static ComputerTurn ai ;
     
 

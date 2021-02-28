@@ -11,16 +11,20 @@ package tictactoe;
  */
 import java.net.*;
 import java.io.*;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.StringTokenizer;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import static tictactoe.ServerHandler.clients;
 
 public class ClientPlayer {
 
@@ -30,9 +34,9 @@ public class ClientPlayer {
     public Thread th1;
     
     static public String avatarsImgPaths[] = { "file:src/tictactoe/img/av1.jpg",
-                                                "file:src/tictactoe/img/av2.jpg",
-                                                "file:src/tictactoe/img/av3.jpg",
                                                 "file:src/tictactoe/img/av4.jpg",
+                                                "file:src/tictactoe/img/av3.jpg",
+                                                "file:src/tictactoe/img/av2.jpg",
                                                 "file:src/tictactoe/img/av5.png"};
     
 
@@ -56,14 +60,19 @@ public class ClientPlayer {
     public StartGameMenuBase startGame;
     public IntroPageBase intoRoot;
     public WaitingPageBase waitRoot;
+    public PlayerProfileBase pProfileRoot;
+    public Simulate_BordBase simRoot;
+    public WinnerBase winRoot;
+    public LossBase loseRoot;
+    public DrawBase drawRoot ;
     
-    public Label warningMessage;
 
     public ClientPlayer() {
 
         try {
-            //mySocket = new Socket("127.0.0.1", 5005);
-            mySocket = new Socket("41.37.232.20", 49000,InetAddress.getLocalHost(),49000);
+           mySocket = new Socket("127.0.0.1", 49000);
+          //  mySocket = new Socket("154.176.119", 49000,InetAddress.getLocalHost(),49000);
+         //  mySocket = new Socket("41.37.232.20", 49000);
             inputStream = new DataInputStream(mySocket.getInputStream());
             outStream = new PrintStream(mySocket.getOutputStream());
             th1 = new ThreadOne();
@@ -95,28 +104,92 @@ public class ClientPlayer {
             case "wait":
                 this.gameScene.setRoot(waitRoot);
                 break;
+            case "win":
+                this.gameScene.setRoot(winRoot);
+                break;
+            case "lose":
+                this.gameScene.setRoot(loseRoot);
+                break;
+            case "draw":
+                this.gameScene.setRoot(drawRoot);
+                break;
+            case "sim":
+                this.gameScene.setRoot(simRoot);
+                break;
+            case "profile":
+                this.gameScene.setRoot(pProfileRoot);
+                break;
+            
                 
         }
     }
     
      public void setGameRoot(String root,int path1Index,int path2Index) 
-     {       
-        gameRoot = new TicTacBase(this,avatarsImgPaths[path2Index],avatarsImgPaths[path1Index]);
-        this.gameScene.setRoot(gameRoot);    
+     {
+         switch (root)
+         {
+         case "game":
+            gameRoot = new TicTacBase(this,avatarsImgPaths[path2Index],avatarsImgPaths[path1Index]);
+            this.gameScene.setRoot(gameRoot);  
+            break;
+         case "profile":
+            pProfileRoot = new PlayerProfileBase(this,avatarsImgPaths[path2Index]);
+            this.gameScene.setRoot(pProfileRoot);  
+            break;
+         }
      }
 
     public void setClientRootsAndScene(Scene s, LoginRegPageBase l,  StartGameMenuBase st,IntroPageBase i,
             WaitingPageBase w) {
         this.gameScene = s;
-       // this.gameRoot = g;
         this.loginRoot = l;
         this.startGame = st;
         this.waitRoot = w;
         this.intoRoot=i;
+        
     }
 
     public void sendDataToServer(String operationCode) {
         outStream.println(operationCode);
+    }
+    
+     public void setProfileData(String msg) {
+        String[] split = new String[2];
+        StringTokenizer st0 = new StringTokenizer(msg, ".");
+        for (int i = 0; st0.hasMoreTokens(); i++) {
+
+            split[i] = st0.nextToken();
+        }
+        String[] tokens = new String[4];
+        StringTokenizer st1 = new StringTokenizer(split[0], "_");
+        for (int i = 0; st1.hasMoreTokens(); i++) {
+            tokens[i] = st1.nextToken();
+        }
+        StringTokenizer st2 = new StringTokenizer(split[1], "_");
+        for (;st2.hasMoreTokens();) {
+            
+            MenuItem mi = new MenuItem();
+            mi.setMnemonicParsing(false);
+            mi.setText(st2.nextToken());
+            mi.setOnAction((e)-> {
+                pProfileRoot.splitMenuButton.setText(mi.getText());
+            });
+            pProfileRoot.splitMenuButton.getItems().add(mi);
+        }
+       
+        pProfileRoot.label6.setText(" " + tokens[0]);
+        pProfileRoot.label8.setText(" " + tokens[1]);
+        pProfileRoot.label9.setText(" " + tokens[3]);
+        pProfileRoot.label10.setText(" " + tokens[2]);
+        int n = Integer.parseInt(tokens[3]) + Integer.parseInt(tokens[2]) + Integer.parseInt(tokens[1]);
+        double ratio = 0;
+        if (n != 0) {
+            ratio = ((double) Integer.parseInt(tokens[1]) / n);
+
+        }
+        pProfileRoot.label11.setText(" " + ratio + " ");
+        pProfileRoot.label7.setText(" " + n + " ");
+  
     }
 
     public String ReadDataFromServer() {
@@ -148,8 +221,9 @@ public class ClientPlayer {
                 }
                 else if("T".equals(msg.substring(2, 3)))
                 {
-                    warningMessage.setText("Wrong Data");
-                    warningMessage.setVisible(true);
+                    loginRoot.loginAlert.setTitle("Error");
+                    loginRoot.loginAlert.setContentText("wrong data re-enter or to register tab..");
+                    loginRoot.loginAlert.showAndWait();
                 }
                 else {
                     String temp = msg.substring(4);
@@ -158,7 +232,7 @@ public class ClientPlayer {
                     this.playerName = st1.nextToken();
                     this.avatarId =  Integer.parseInt(st1.nextToken());
                     this.State = true;
-                    warningMessage.setVisible(false);                    
+                  
                     System.out.println(this.trueId);
                     System.out.println(this.playerName);
                     System.out.println(this.State);
@@ -167,12 +241,39 @@ public class ClientPlayer {
 
                 break;
             }
+            case "rg": //answer from register
+            {
+                if(msg.charAt(3) == '1')
+                {
+                    String temp = msg.substring(5);
+                    StringTokenizer p = new StringTokenizer(temp, "_"); 
+                    this.trueId = Integer.parseInt(p.nextToken());
+                    this.playerName = p.nextToken();
+                    this.avatarId = Integer.parseInt(p.nextToken());
+                    this.setGameRoot("into");
+                    loginRoot.register_alert.setContentText("you registered successfully... ");
+                }
+                else
+                {
+                    loginRoot.register_alert.setContentText("you can't enter this user name.. ");                    
+                }
+                loginRoot.register_alert.showAndWait();
+                break;
+            }
+            
+            case "ZD":
+                msg = msg.substring(2);
+                System.out.println("dsad"+msg);
+                setProfileData(msg);
+
+                break;
 
             case "04": // go to game
             {
                 System.out.println(msg);
                 if (msg.charAt(2) != 'I') 
                 {
+                    aiGame=false;
                     String temp = msg.substring(3);
                     StringTokenizer st1 = new StringTokenizer(temp, "_"); 
                     String opponentName = st1.nextToken();
@@ -195,7 +296,7 @@ public class ClientPlayer {
                 else { // go to ai
                     aiGame=true;
                     if (msg.charAt(3) == '0') {
-                         this.setGameRoot("game",avatarId,4);
+                        this.setGameRoot("game",avatarId,4);
                         clientSymbol = "X";
                         turn=true;
                         gameRoot.label3.setText(playerName);
@@ -242,18 +343,20 @@ public class ClientPlayer {
                     System.out.println(resualt);
                     if(clientSymbol.equals(resualt))
                     {
-                       //i win 
+                        winRoot = new WinnerBase(this);
+                        this.setGameRoot("win");
                         System.out.println("you win");
                     }
                     else if("d".equals(resualt))
                     {
-                         //draw
-                        System.out.println("you draw");
+                         drawRoot = new DrawBase(this);
+                        this.setGameRoot("draw");
                     }
                     else 
                     {
-                        // i lose 
-                        System.out.println("you lose");
+                        loseRoot = new LossBase(this);
+                        this.setGameRoot("lose");
+                      
                     }
                 }
                 break;
@@ -261,7 +364,48 @@ public class ClientPlayer {
             case "0M":
                 gameRoot.textArea.appendText(msg.substring(2) + "\n");
                 break;
+            case "sy": {
+               
+                simRoot = new Simulate_BordBase(this);
+                setGameRoot("sim");
+                char playerTurn = 'x';
+                String msg1 = msg.substring(2);
+                System.err.println(msg1);
+                String[] position = msg1.split("_");
+
+                for (String p : position) {
+                    System.out.println("hi" + p);
+                    if (p.equals("X") || p.equals("O")) {
+                        playerTurn = p.charAt(0);
+                    } else {
+//                        Instant start = Instant.now();
+//                        Instant end = Instant.now();
+//                        end = end.plusSeconds(4);                        
+//                        Duration d = Duration.between(start, end);
+//                        while(!d.isNegative())
+//                        {
+//                            start = Instant.now();
+//                            d = Duration.between(start, end);
+//                        
+//                        }
+
+                        System.out.println(Character.getNumericValue(p.charAt(0))+"345");
+                        simRoot.gridPane.getChildren().get(Character.getNumericValue(p.charAt(0))).setDisable(true);
+                        javafx.scene.control.Button btn = (javafx.scene.control.Button) simRoot.gridPane.getChildren().get(Character.getNumericValue(p.charAt(0)));
+                        String str = Character.toString(playerTurn);
+                        btn.setText(str);
+                        if (playerTurn == 'X') {
+                            playerTurn = 'O';
+                        } else if (playerTurn == 'O') {
+                            playerTurn = 'X';
+                        }
+
+                    }
  
+
+                }
+                break;
+            }
           
             default: {
 

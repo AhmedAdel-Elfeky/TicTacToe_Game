@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitMenuButton?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <Pane style="-fx-background-color: black;" BorderPane.alignment="CENTER">
+         <children>
+            <Label layoutX="509.0" layoutY="206.0" prefHeight="99.0" prefWidth="190.0" text="Wins             :" textFill="WHITE">
+               <font>
+                  <Font name="Jokerman" size="22.0" />
+               </font>
+            </Label>
+            <Label alignment="CENTER" layoutX="53.0" layoutY="45.0" prefHeight="112.0" prefWidth="424.0" style="-fx-background-color: black; -fx-region-background: white;" text="Your Plofile" textFill="WHITE">
+               <font>
+                  <Font name="Jokerman" size="57.0" />
+               </font>
+               <effect>
+                  <DropShadow color="#eb02b1" height="255.0" radius="127.0" spread="0.76" width="255.0" />
+               </effect>
+            </Label>
+            <Label layoutX="57.0" layoutY="210.0" prefHeight="81.0" prefWidth="171.0" text="user_name  : " textFill="WHITE">
+               <font>
+                  <Font name="Jokerman" size="22.0" />
+               </font>
+            </Label>
+            <Label layoutX="57.0" layoutY="253.0" prefHeight="99.0" prefWidth="190.0" text="# of Games   :" textFill="WHITE">
+               <font>
+                  <Font name="Jokerman" size="22.0" />
+               </font>
+            </Label>
+            <Label layoutX="56.0" layoutY="302.0" prefHeight="99.0" prefWidth="190.0" text="Draw              :" textFill="WHITE">
+               <font>
+                  <Font name="Jokerman" size="22.0" />
+               </font>
+            </Label>
+            <Button layoutX="646.0" layoutY="596.0" mnemonicParsing="false" prefHeight="69.0" prefWidth="200.0" style="-fx-background-color: black; -fx-background-radius: 100; -fx-border-color: white; -fx-border-radius: 100;" text="Back" textFill="WHITE">
+               <font>
+                  <Font name="Jokerman" size="29.0" />
+               </font>
+               <effect>
+                  <DropShadow color="#c308aa" height="53.62" radius="27.049999999999997" spread="0.57" width="56.58" />
+               </effect>
+            </Button>
+            <Label layoutX="509.0" layoutY="300.0" prefHeight="99.0" prefWidth="190.0" text="W/L Ratio  :" textFill="WHITE">
+               <font>
+                  <Font name="Jokerman" size="22.0" />
+               </font>
+            </Label>
+            <Label layoutX="508.0" layoutY="251.0" prefHeight="99.0" prefWidth="190.0" text="Loses            :" textFill="WHITE">
+               <font>
+                  <Font name="Jokerman" size="22.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="146.0" fitWidth="250.0" layoutX="542.0" layoutY="45.0" pickOnBounds="true" preserveRatio="true" />
+            <Label layoutX="212.0" layoutY="203.0" prefHeight="99.0" prefWidth="190.0" text="Name" textFill="WHITE">
+               <font>
+                  <Font name="Jokerman" size="22.0" />
+               </font>
+            </Label>
+            <Label layoutX="212.0" layoutY="254.0" prefHeight="99.0" prefWidth="190.0" text="2" textFill="WHITE">
+               <font>
+                  <Font name="Jokerman" size="22.0" />
+               </font>
+            </Label>
+            <Label layoutX="654.0" layoutY="208.0" prefHeight="99.0" prefWidth="190.0" text="4" textFill="WHITE">
+               <font>
+                  <Font name="Jokerman" size="22.0" />
+               </font>
+            </Label>
+            <Label layoutX="211.0" layoutY="304.0" prefHeight="99.0" prefWidth="190.0" text="2" textFill="WHITE">
+               <font>
+                  <Font name="Jokerman" size="22.0" />
+               </font>
+            </Label>
+            <Label layoutX="655.0" layoutY="253.0" prefHeight="99.0" prefWidth="190.0" text="3" textFill="WHITE">
+               <font>
+                  <Font name="Jokerman" size="22.0" />
+               </font>
+            </Label>
+            <Label layoutX="654.0" layoutY="302.0" prefHeight="99.0" prefWidth="190.0" text="1.3" textFill="WHITE">
+               <font>
+                  <Font name="Jokerman" size="22.0" />
+               </font>
+            </Label>
+            <SplitMenuButton alignment="CENTER" layoutX="213.0" layoutY="410.0" mnemonicParsing="false" opacity="0.8" prefHeight="64.0" prefWidth="315.0" style="-fx-background-color: black; -fx-region-background: black; -fx-region-border: 100; -fx-border-color: black; -fx-background-radius: 100;" text="Choose one to play">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Action 1" />
+                <MenuItem mnemonicParsing="false" text="Action 2" />
+              </items>
+               <effect>
+                  <DropShadow color="#e31087" height="35.59" radius="21.0" spread="0.41" width="50.41" />
+               </effect>
+            </SplitMenuButton>
+            <Label layoutX="55.0" layoutY="394.0" prefHeight="99.0" prefWidth="190.0" text="Records        :" textFill="WHITE">
+               <font>
+                  <Font name="Jokerman" size="22.0" />
+               </font>
+            </Label>
+            <Button layoutX="575.0" layoutY="406.0" mnemonicParsing="false" prefHeight="49.0" prefWidth="137.0" style="-fx-background-color: black; -fx-background-radius: 100; -fx-border-color: white; -fx-border-radius: 100;" text="Play" textFill="WHITE">
+               <font>
+                  <Font name="Jokerman" size="29.0" />
+               </font>
+               <effect>
+                  <DropShadow color="#c308aa" height="53.62" radius="27.049999999999997" spread="0.57" width="56.58" />
+               </effect>
+            </Button>
+            <SplitMenuButton alignment="CENTER" layoutX="212.0" layoutY="501.0" mnemonicParsing="false" opacity="0.8" prefHeight="64.0" prefWidth="315.0" style="-fx-background-color: black; -fx-region-background: black; -fx-region-border: 100; -fx-border-color: black; -fx-background-radius: 100;" text="select one:">
+               <items>
+                  <MenuItem mnemonicParsing="false">
+                     <graphic>
+                        <ListView prefHeight="200.0" prefWidth="200.0" />
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false">
+                     <graphic>
+                        <ListView prefHeight="200.0" prefWidth="200.0" />
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false">
+                     <graphic>
+                        <ListView prefHeight="200.0" prefWidth="200.0" />
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false">
+                     <graphic>
+                        <ListView prefHeight="200.0" prefWidth="200.0" />
+                     </graphic>
+                  </MenuItem>
+               </items>
+               <effect>
+                  <DropShadow color="#e31087" height="35.59" radius="21.0" spread="0.41" width="50.41" />
+               </effect>
+            </SplitMenuButton>
+            <Label layoutX="56.0" layoutY="480.0" prefHeight="99.0" prefWidth="190.0" text="Avatar          :" textFill="WHITE">
+               <font>
+                  <Font name="Jokerman" size="22.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+   </center>
+</BorderPane>

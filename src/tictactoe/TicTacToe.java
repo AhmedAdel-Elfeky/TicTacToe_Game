@@ -28,7 +28,6 @@ public class TicTacToe extends Application {
     Stage primaryStage;
     public ClientPlayer client = new ClientPlayer();
     LoginRegPageBase loginRoot;
-   // TicTacBase boardGame = new TicTacBase(client);
     IntroPageBase intoRoot;
     Scene scene;
     WaitingPageBase waitRoot;

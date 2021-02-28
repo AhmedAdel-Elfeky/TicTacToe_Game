@@ -1,6 +1,7 @@
 package tictactoe;
 
 import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -30,7 +31,6 @@ public class LoginRegPageBase extends BorderPane {
     protected final Label label1;
     protected final TextField textField;
     protected final DropShadow dropShadow2;
-    protected final Label label2;
     protected final Tab tab0;
     protected final Pane pane0;
     protected final Label label3;
@@ -69,7 +69,15 @@ public class LoginRegPageBase extends BorderPane {
     
     protected String userName;
     protected String password;
-    public int avatarId=1;
+    protected int avatarId = 0;
+    protected String email;
+    
+    Alert user_alert =null;
+    Alert pass_alert  = null; 
+    Alert confirm_alert = null; 
+    Alert email_alert = null; 
+    Alert register_alert=null ;
+    Alert loginAlert=null ;
     
     public LoginRegPageBase(ClientPlayer client) {
 
@@ -86,8 +94,8 @@ public class LoginRegPageBase extends BorderPane {
         label1 = new Label();
         textField = new TextField();
         dropShadow2 = new DropShadow();
-        label2 = new Label();
-        client.warningMessage = label2;
+       
+      
         tab0 = new Tab();
         pane0 = new Pane();
         label3 = new Label();
@@ -115,6 +123,13 @@ public class LoginRegPageBase extends BorderPane {
         dropShadow11 = new DropShadow();
         button4 = new Button();
         dropShadow12 = new DropShadow();
+        
+        user_alert = new Alert(Alert.AlertType.ERROR);
+        pass_alert = new Alert(Alert.AlertType.ERROR);
+        confirm_alert = new Alert(Alert.AlertType.ERROR);
+        email_alert = new Alert(Alert.AlertType.ERROR);
+        register_alert = new Alert(Alert.AlertType.INFORMATION);
+        loginAlert= new Alert(Alert.AlertType.INFORMATION);
 
         setMaxHeight(USE_PREF_SIZE);
         setMaxWidth(USE_PREF_SIZE);
@@ -187,19 +202,21 @@ public class LoginRegPageBase extends BorderPane {
                 }
                 else if(passwordLength == 0 && userLength == 0)
                 {
-                    
-                     label2.setText("you must enter your username and your password");
-                     label2.setVisible(true);
+                    loginAlert.setTitle("Error");
+                    loginAlert.setContentText("you must enter your username and your password");
+                    loginAlert.showAndWait();
                 }
                 else if(userLength == 0)
                 {
-                     label2.setText("you must enter your username");
-                     label2.setVisible(true);
+                    loginAlert.setTitle("Error");
+                    loginAlert.setContentText("you must enter your username");
+                    loginAlert.showAndWait();
                 }
                 else 
                 {
-                     label2.setText("you must your password");
-                     label2.setVisible(true);
+                    loginAlert.setTitle("Error");
+                    loginAlert.setContentText("you must enter your password");
+                    loginAlert.showAndWait();
                 }
             }
         });
@@ -293,16 +310,7 @@ public class LoginRegPageBase extends BorderPane {
         });
         
 
-        label2.setLayoutX(301.0);
-        label2.setLayoutY(538.0);
-        label2.setPrefHeight(99.0);
-        label2.setPrefWidth(253.0);
-        label2.setText("wrong User Data re-enter or if you haven't an account move to register tab");
-        label2.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
-        label2.setTextFill(javafx.scene.paint.Color.valueOf("#e81010"));
-        label2.setWrapText(true);
-        label2.setFont(new Font("Arial", 16.0));
-        label2.setVisible(false);
+        
         tab.setContent(pane);
 
         tab0.setClosable(false);
@@ -525,7 +533,7 @@ public class LoginRegPageBase extends BorderPane {
                button3.setEffect(null);
                button1.setEffect(null);
                button2.setEffect(null);
-               avatarId=1;
+               avatarId=0;
             }
         });
        
@@ -546,7 +554,7 @@ public class LoginRegPageBase extends BorderPane {
                button3.setEffect(null);
                button2.setEffect(null);
                button0.setEffect(null);
-                avatarId=2;
+                avatarId=3;
             }
         });
        
@@ -567,7 +575,7 @@ public class LoginRegPageBase extends BorderPane {
                button3.setEffect(null);
                button1.setEffect(null);
                button0.setEffect(null);
-                avatarId=3;
+                avatarId=2;
             }
         });
        
@@ -587,7 +595,7 @@ public class LoginRegPageBase extends BorderPane {
                button1.setEffect(null);
                button2.setEffect(null);
                button0.setEffect(null);
-               avatarId=4;
+               avatarId=1;
             }
         });
 
@@ -615,6 +623,74 @@ public class LoginRegPageBase extends BorderPane {
               button4.setEffect(null);
             }
         });
+         button4.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent ev) {
+                if (textField0.getText().isEmpty()) {
+                    user_alert.setTitle("Error");
+                    user_alert.setContentText("Please enter your name");
+                    user_alert.showAndWait();
+
+                }
+
+                else if (textField1.getText().isEmpty()) {
+                    email_alert.setTitle("Error");
+                    email_alert.setContentText("Please enter your email");
+                    email_alert.showAndWait();
+
+                }
+                else if (!textField1.getText().isEmpty()) 
+                {
+                    String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
+                    if (!textField1.getText().matches(regex)) {
+                        email_alert.setTitle("Error");
+                        email_alert.setContentText("Please enter falid email ");
+                        email_alert.showAndWait();
+                    }
+                }
+                if (passwordField0.getText().isEmpty()) {
+                    pass_alert.setTitle("Error");
+                    pass_alert.setContentText("Please enter a password ");
+                    pass_alert.showAndWait();
+                    //return;
+                }
+                else if (!passwordField0.getText().isEmpty()) {
+                    if (8 > passwordField0.getText().length()) {
+                        pass_alert.setTitle("Error");
+                        pass_alert.setContentText("Password can't be less than 8 character");
+                        pass_alert.showAndWait();
+
+                    }
+
+                }
+                if (passwordField1.getText().isEmpty()) {
+                    pass_alert.setTitle("Error");
+                    pass_alert.setContentText("Please enter  password again");
+                    pass_alert.showAndWait();
+
+                }
+                else if (!passwordField1.getText().isEmpty()) {
+                    if (!passwordField1.getText().matches(passwordField0.getText())) {
+                        pass_alert.setTitle("Error");
+                        pass_alert.setContentText("Passwords don't match");
+                        pass_alert.showAndWait();
+                        //    showAlert(Alert.AlertType.ERROR, registerPane.getScene().getWindow(), "Form Error!", "Password can't be less than 8 character");
+                        //return;
+                    }
+
+                }
+                if (!textField0.getText().equals("") && passwordField0.getText().equals(passwordField1.getText())
+                        && !passwordField0.getText().equals("") && !textField1.getText().isEmpty()) 
+                {
+                    userName = textField0.getText();
+                    password = passwordField0.getText();
+                    email = textField1.getText();
+                    client.sendDataToServer("rg"+"_"+userName+"_"+password+"_"+email+"_"+avatarId);  
+  
+                }
+
+            }
+        });
         tab0.setContent(pane0);
         setCenter(tabPane);
 
@@ -624,7 +700,6 @@ public class LoginRegPageBase extends BorderPane {
         pane.getChildren().add(label0);
         pane.getChildren().add(label1);
         pane.getChildren().add(textField);
-        pane.getChildren().add(label2);
         tabPane.getTabs().add(tab);
         pane0.getChildren().add(label3);
         pane0.getChildren().add(label4);
@@ -644,6 +719,7 @@ public class LoginRegPageBase extends BorderPane {
         tabPane.getTabs().add(tab0);
 
     }
+
     
      public void setLoginUserData(String userName,String userPassword)
     {

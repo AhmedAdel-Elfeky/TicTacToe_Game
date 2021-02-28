@@ -157,8 +157,8 @@ public class LoginPageBase extends BorderPane {
                 {
                      setRegisterationUserData(textField0.getText(),passwordField0.getText(),1);
                      DataBase db = new DataBase();
-                     int  f = db.RegisterNewUser(userName,password,1);
-                     System.out.println(f);
+                     //int  f = db.RegisterNewUser(userName,password,1);
+                  //   System.out.println(f);
                 }
                 else{
                     if (textField0.getText().equals(""))

@@ -141,7 +141,7 @@ public class StartGameMenuBase extends BorderPane {
         label.setPrefHeight(223.0);
         label.setPrefWidth(504.0);
         label.setStyle("-fx-background-color: black; -fx-region-background: white;");
-        label.setText("Tic Tack Toe");
+        label.setText("Tic Tac Toe");
         label.setTextFill(javafx.scene.paint.Color.WHITE);
         label.setFont(new Font("Jokerman", 57.0));
 

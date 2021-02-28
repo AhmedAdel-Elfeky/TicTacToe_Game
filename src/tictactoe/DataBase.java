@@ -62,30 +62,41 @@ public class DataBase {
         return inf;
     }
 
-    public int RegisterNewUser(String name, String pass, int avatarId) {
+    public PlayerInformation RegisterNewUser(String name, String mail,String pass, int avatarId) {
         ResultSet result;
         PreparedStatement statment;
-        int player_id;
+        PlayerInformation pInfo = new PlayerInformation();
         try {
 
             statment = c.prepareStatement(" select count(player_name) counter from players where player_name= ?;",
                     ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
             statment.setString(1, name);
             result = statment.executeQuery();
-
+             pInfo.playerId=-1;
             if (result.next()) {
                 if (result.getInt(1) == 0) {
-                    statment = c.prepareStatement("insert into players (player_name,password) values (?,?)",
+                    statment = c.prepareStatement("insert into players (player_name,password,avatar_id,email) values (?,?,?,?)",
                             ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
                     statment.setString(1, name);
                     statment.setString(2, pass);
+                    statment.setInt(3, avatarId);
+                    statment.setString(4, mail);
                     statment.executeUpdate();
+                    pInfo.playerName = name;
+                    pInfo.playerAvatar = avatarId;
+                    statment = c.prepareStatement(" select player_id counter from players where player_name= ?;",
+                    ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
+                    statment.setString(1, name);
+                    result = statment.executeQuery();
+                    result.next();
+                    pInfo.playerId = result.getInt(1);
+                    
                     statment.close();
-                    return 1;
+                    return pInfo;
                 }
             } else {
                 statment.close();
-                return -1;
+                return pInfo;
             }
 
         } catch (Exception e) {
@@ -93,34 +104,60 @@ public class DataBase {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
-        return -1;
+        return pInfo;
     }
     
-//    public String getPlayerName(int id)
-//    {
-//         ResultSet result;
-//        PreparedStatement statment;
-//        int player_id;
-//        try {
-//            statment = c.prepareStatement(" select player_id , player_name d , password from players where player_name= ? and password = ?; ",
-//                    ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
-//            statment.setString(1, name);
-//            statment.setString(2, pass);
-//            result = statment.executeQuery();
-//            if (result.next()) {
-//                player_id = result.getInt(1);
-//                statment.close();
-//                return player_id;
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-//            System.exit(0);
-//        }
-//
-//        return -1;
-//    }
+    public String getSavedGames(int id)
+    {
+        ResultSet result;
+        PreparedStatement statment;
+        String matchList="";
+        try {
+            statment = c.prepareStatement(" select match_id  from play where playeroneid = ? and saved = true; ",
+                    ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
+            statment.setInt(1, id);
+            
+            result = statment.executeQuery();
+            while (result.next()) {
+                matchList += result.getInt(1)+"_";
+            }
+            statment.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+
+        return matchList;
+    
+    }
+
+    public String getUsername(int id )
+    {
+        ResultSet result;
+        PreparedStatement statment;
+        String uname;
+        try {
+            statment = c.prepareStatement(" select player_name from players where player_id = ?; ",
+                    ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
+            statment.setInt(1, id);
+            
+            result = statment.executeQuery();
+            if (result.next()) {
+                uname = result.getString(1);
+                statment.close();
+                return uname;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+
+        return "";
+    }
     
     public int addNewGame(String gameDate )
     {
@@ -148,8 +185,113 @@ public class DataBase {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
-        return id;
-        
+        return id;       
     }
+    
+    public String simulate(int id) {
+        ResultSet result;
+        PreparedStatement statment;
+        try {
+   
+            statment = c.prepareStatement("select moves from matches where match_id = ?");
+            statment.setInt(1, id);
+            result = statment.executeQuery();
+            //System.out.println(result.getString(1));
+            //sim.close();
+            result.next();
+            statment.close();
+            System.err.println("database" + result.getString(1));
+            return result.getString(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+        return "null";
+    }
+
+    public void saveMatch(int id, String record) {
+        PreparedStatement statment;
+        try {           
+            statment = c.prepareStatement("update matches set moves = ? where match_id = ?");
+            statment.setString(1, record);
+            statment.setInt(2, id);
+            statment.executeUpdate();
+            statment.close();
+            //System.err.println("database" + result.getString(1));
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+    }
+
+    public void savedGameResult(int matchID, int playerID, String winOrLoseOrDraw, boolean saved, char symbol) {
+        try {
+            ResultSet result;
+            Statement stmt = c.createStatement();
+            String queryString;
+            if (winOrLoseOrDraw == "d") {
+                queryString = new String("insert into play values('"+playerID+"','"+matchID+"', 'd','"+symbol+"', '"+saved+"')");
+            }
+            else if(winOrLoseOrDraw == "w") {
+                queryString = new String("insert into play values('"+playerID+"','"+matchID+"', 'w','"+symbol+"', '"+saved+"')");
+            }
+            else{
+                queryString = new String("insert into play values('"+playerID+"','"+matchID+"', 'l','"+symbol+"', '"+saved+"')");
+            }
+            stmt.executeUpdate(queryString);
+            stmt.close();
+            //System.err.println("database" + result.getString(1));
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+    }
+    
+    public int getMatches(int id , String b)
+    {
+       
+        ResultSet result;
+        PreparedStatement statment;
+        int n;
+        try {
+            if(b.equals("w"))
+            {
+                statment = c.prepareStatement(" select count(playeroneid) from play  where match_result = 'w' and playeroneid =?; ",
+                              ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
+            }
+            else if (b.equals("l"))
+            {
+                statment = c.prepareStatement(" select count(playeroneid) from play  where match_result = 'l' and playeroneid =?; ",
+                            ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
+            } 
+            else 
+            {
+                statment = c.prepareStatement(" select count(playeroneid) from play  where match_result = 'd' and playeroneid =?; ",
+                            ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
+            }
+            
+
+            statment.setInt(1, id);
+         
+            result = statment.executeQuery();
+            if (result.next()) {
+                n = result.getInt(1);
+                statment.close();
+                return n;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
+
+        return -1;
+    }
+    
+    
     
 }

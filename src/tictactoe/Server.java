@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.net.*;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 
 public class Server {
@@ -21,7 +23,8 @@ public class Server {
     public Server() {
         try {
             dBase = new DataBase();
-            serverSocket = new ServerSocket(5005);
+            serverSocket = new ServerSocket(49000);
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -59,6 +62,7 @@ class ServerHandler extends Thread {
     static HashMap<Integer, ServerHandler> clients = new HashMap<Integer, ServerHandler>();
     
     static HashMap<Integer, Game> runningGames = new HashMap<Integer, Game>();
+    boolean startRecord = false;
 
     public ServerHandler(Socket cs, int unauthorizedId) {
         try {
@@ -111,6 +115,27 @@ class ServerHandler extends Thread {
                 }
                 break;
             }
+            case "rg": //want to register
+            {
+                String temp = msg.substring(3);
+                StringTokenizer p = new StringTokenizer(temp, "_"); 
+                String name = p.nextToken();
+                String email = p.nextToken();
+                String password = p.nextToken();
+                int avatarId = Integer.parseInt(p.nextToken());
+                pInfo = Server.dBase.RegisterNewUser(name, password,email,avatarId);
+                if (pInfo.playerId != -1) {
+                    this.reliableId = pInfo.playerId;
+                    this.outStream.println("rg_" + "1_" +pInfo.playerId +"_"+pInfo.playerName+"_"+pInfo.playerAvatar);
+                    clients.put(this.reliableId, this);
+                    unauthorizedClientsVector.remove(this);
+                }
+                else
+                {
+                    this.outStream.println("rg_" + "0");//reg faild
+                }
+                break;
+            }
             case "03": //want to play
             {
                 if (msg.substring(2, 3).equals("1")) //want to play another second player
@@ -157,6 +182,9 @@ class ServerHandler extends Thread {
                 makeMoveANDSwitch(msg);
                 break;
             }
+            case "ZD":
+                getProfileData();
+                break;
 
             case "S0": //sign out
             {
@@ -179,35 +207,149 @@ class ServerHandler extends Thread {
                 }
                 break;
             }
+             case "sm": {
+                this.outStream.println("sm");
+
+                try {
+                    msgFromClient = inputStream.readLine();//read client
+                    int ID = Integer.parseInt(msg.substring(2));
+                    String symbols = Server.dBase.simulate(ID);
+                    System.out.println(ID + symbols);
+                    outStream.println("sy" + symbols);
+                    System.err.println("done");
+
+                } catch (IOException ex) {
+                    Logger.getLogger(ServerHandler.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                break;
+            }
+            case "sg": {
+                clients.get(reliableId).startRecord = true;
+                break;
+            }
         }
     }
 
-    void makeMoveANDSwitch(String msg) {
-        int row = Character.getNumericValue(msg.charAt(3)) / 3;
-        int col = Character.getNumericValue(msg.charAt(3)) % 3;
-        runningGames.get(this.gameID).gameBoard[row][col] = Character.toString(msg.charAt(2));
-        String res = runningGames.get(this.gameID).checkWinner();
-        clients.get(runningGames.get(this.gameID).playerOneId).outStream.println("0S"+res+msg.substring(2));
-        clients.get(runningGames.get(this.gameID).playerwoId).outStream.println("0S"+res+msg.substring(2));
-        System.out.println("OS"+res+msg.substring(2));
+    void getProfileData() {
+        String uname = Server.dBase.getUsername(this.reliableId);
+        uname += "_";
+        uname += Server.dBase.getMatches(this.reliableId, "w");
+        uname += "_";
+        uname += Server.dBase.getMatches(this.reliableId, "l");
+        uname += "_";
+        uname += Server.dBase.getMatches(this.reliableId, "d");
+        uname += ".";
+        uname += Server.dBase.getSavedGames(this.reliableId);
+
+        outStream.println("ZD" + uname);
+
     }
-    void makeMoveANDSwitchAi(String msg) {
-        int row = Character.getNumericValue(msg.charAt(3)) / 3;
+    void makeMoveANDSwitch(String msg) {
+//        int row = Character.getNumericValue(msg.charAt(3)) / 3;
+//        int col = Character.getNumericValue(msg.charAt(3)) % 3;
+//        runningGames.get(this.gameID).gameBoard[row][col] = Character.toString(msg.charAt(2));
+//        String res = runningGames.get(this.gameID).checkWinner();
+//        clients.get(runningGames.get(this.gameID).playerOneId).outStream.println("0S"+res+msg.substring(2));
+//        clients.get(runningGames.get(this.gameID).playerwoId).outStream.println("0S"+res+msg.substring(2));
+//        System.out.println("OS"+res+msg.substring(2));
+           int row = Character.getNumericValue(msg.charAt(3)) / 3;
         int col = Character.getNumericValue(msg.charAt(3)) % 3;
+        int player2ID = 0;
+        String player1State, player2State;
         runningGames.get(this.gameID).gameBoard[row][col] = Character.toString(msg.charAt(2));
         String res = runningGames.get(this.gameID).checkWinner();
         if (!res.equals("_")) //player win or his move result in draw
         {
-            clients.get(runningGames.get(this.gameID).playerOneId).outStream.println("0S"+res+msg.substring(2));  //size 5         
-        }                   
-        else
-        {       
-            int pos = Game.findBestMove(runningGames.get(this.gameID).gameBoard);
+            if (reliableId == runningGames.get(gameID).playerOneId) {
+                player2ID = runningGames.get(gameID).playerwoId;
+            } else {
+                player2ID = runningGames.get(gameID).playerOneId;
+            }
+            if (res.equals("d")) {
+                player1State = "d";
+                player2State = "d";
+            } else {
+                player1State = "w";
+                player2State = "l";
+            }
+            Server.dBase.savedGameResult(gameID, reliableId, player1State, clients.get(reliableId).startRecord, msg.charAt(2));
+
+            if (Character.toString(msg.charAt(2)).equals("O")) {
+                Server.dBase.savedGameResult(gameID, player2ID, player2State, clients.get(player2ID).startRecord, 'X');
+            } else {
+                Server.dBase.savedGameResult(gameID, player2ID, player2State, clients.get(player2ID).startRecord, 'O');
+            }
+        }
+        clients.get(runningGames.get(this.gameID).playerOneId).outStream.println("0S" + res + msg.substring(2));
+        clients.get(runningGames.get(this.gameID).playerwoId).outStream.println("0S" + res + msg.substring(2));
+        System.out.println("OS" + res + msg.substring(2));
+        if (runningGames.get(gameID).firstPlay == true) {
+            runningGames.get(gameID).record += 'X';
+            runningGames.get(gameID).firstPlay = false;
+        }
+        runningGames.get(gameID).record += '_';
+        runningGames.get(gameID).record += msg.charAt(3);
+        if (!res.equals("_") && (clients.get(reliableId).startRecord || clients.get(player2ID).startRecord)) {
+            Server.dBase.saveMatch(gameID, runningGames.get(gameID).record);
+        }  
+    }
+    void makeMoveANDSwitchAi(String msg) {
+//        int row = Character.getNumericValue(msg.charAt(3)) / 3;
+//        int col = Character.getNumericValue(msg.charAt(3)) % 3;
+//        runningGames.get(this.gameID).gameBoard[row][col] = Character.toString(msg.charAt(2));
+//        String res = runningGames.get(this.gameID).checkWinner();
+//        if (!res.equals("_")) //player win or his move result in draw
+//        {
+//            clients.get(runningGames.get(this.gameID).playerOneId).outStream.println("0S"+res+msg.substring(2));  //size 5         
+//        }                   
+//        else
+//        {       
+//            int pos = Game.findBestMove(runningGames.get(this.gameID).gameBoard);
+//            row = pos / 3;
+//            col = pos % 3;
+//            runningGames.get(this.gameID).gameBoard[row][col] = "O";
+//            res = runningGames.get(this.gameID).checkWinner();
+//            clients.get(runningGames.get(this.gameID).playerOneId).outStream.println("0S"+res+msg.substring(2)+"O"+pos);
+//        } 
+
+    int row = Character.getNumericValue(msg.charAt(3)) / 3;
+        int col = Character.getNumericValue(msg.charAt(3)) % 3;
+        int pos;
+        runningGames.get(this.gameID).gameBoard[row][col] = Character.toString(msg.charAt(2));
+        String res = runningGames.get(this.gameID).checkWinner();
+        if (runningGames.get(gameID).firstPlay == true) {
+            runningGames.get(gameID).record += 'X';
+            runningGames.get(gameID).firstPlay = false;
+        }
+        runningGames.get(gameID).record += '_';
+        runningGames.get(gameID).record += msg.charAt(3);
+        if (!res.equals("_")) //player win or his move result in draw
+        {
+            if (res.equals("d")) {
+                Server.dBase.savedGameResult(gameID, reliableId, res, clients.get(reliableId).startRecord, 'X');
+            } else {
+                Server.dBase.savedGameResult(gameID, reliableId, "w", clients.get(reliableId).startRecord, 'X');
+            }
+            clients.get(runningGames.get(this.gameID).playerOneId).outStream.println("0S" + res + msg.substring(2));  //size 5         
+
+        } else {
+            pos = Game.findBestMove(runningGames.get(this.gameID).gameBoard);
             row = pos / 3;
             col = pos % 3;
             runningGames.get(this.gameID).gameBoard[row][col] = "O";
             res = runningGames.get(this.gameID).checkWinner();
-            clients.get(runningGames.get(this.gameID).playerOneId).outStream.println("0S"+res+msg.substring(2)+"O"+pos);
-        } 
+        
+            clients.get(runningGames.get(this.gameID).playerOneId).outStream.println("0S" + res + msg.substring(2) + "O" + pos);
+            runningGames.get(gameID).record += '_';
+            runningGames.get(gameID).record += pos;
+                if (!res.equals("_")) {
+                Server.dBase.savedGameResult(gameID, reliableId, "l", clients.get(reliableId).startRecord, 'X');
+            }
+        }
+        if (!res.equals("_") && clients.get(reliableId).startRecord) {
+            Server.dBase.saveMatch(gameID, runningGames.get(gameID).record);
+        }
+
+    
     }
 }

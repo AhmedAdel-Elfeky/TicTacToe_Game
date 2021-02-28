@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="900.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <left>
+      <Pane prefHeight="750.0" prefWidth="638.0" BorderPane.alignment="CENTER">
+         <children>
+            <GridPane layoutX="28.0" layoutY="220.0" prefHeight="455.0" prefWidth="572.0" style="-fx-background-color: black; -fx-border-color: white;">
+              <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="257.0" prefWidth="304.0" style="-fx-background-color: black; -fx-border-color: white; -fx-border-width: 2;" textFill="WHITE">
+                     <font>
+                        <Font name="Jokerman" size="52.0" />
+                     </font>
+                     <effect>
+                        <InnerShadow blurType="GAUSSIAN" color="#814681" height="90.8" radius="46.5125" width="97.25" />
+                     </effect>
+                  </Button>
+                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="257.0" prefWidth="304.0" style="-fx-background-color: black; -fx-border-color: white; -fx-border-width: 2;" textFill="WHITE" GridPane.columnIndex="1">
+                     <font>
+                        <Font name="Jokerman" size="52.0" />
+                     </font>
+                     <effect>
+                        <InnerShadow blurType="GAUSSIAN" color="#b2a1a1" height="80.96" radius="36.9025" width="68.65" />
+                     </effect>
+                  </Button>
+                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="152.0" prefWidth="159.0" style="-fx-background-color: black; -fx-border-color: white; -fx-border-width: 2;" textFill="WHITE" GridPane.columnIndex="2">
+                     <font>
+                        <Font name="Jokerman" size="52.0" />
+                     </font>
+                     <effect>
+                        <InnerShadow blurType="GAUSSIAN" color="#814681" height="90.8" radius="46.5125" width="97.25" />
+                     </effect>
+                  </Button>
+                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="257.0" prefWidth="304.0" style="-fx-background-color: black; -fx-border-color: white;" textFill="WHITE" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="Jokerman" size="52.0" />
+                     </font>
+                     <effect>
+                        <InnerShadow blurType="GAUSSIAN" color="#b2a1a1" height="71.43" radius="34.52" width="68.65" />
+                     </effect>
+                  </Button>
+                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="257.0" prefWidth="304.0" style="-fx-background-color: black; -fx-border-color: b2a1a1; -fx-border-width: 3;" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="Jokerman" size="52.0" />
+                     </font>
+                     <effect>
+                        <InnerShadow blurType="GAUSSIAN" color="#814681" height="90.8" radius="46.5125" width="97.25" />
+                     </effect>
+                  </Button>
+                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="176.0" prefWidth="247.0" style="-fx-background-color: black; -fx-border-color: white; -fx-border-width: 3;" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="Jokerman" size="52.0" />
+                     </font>
+                     <effect>
+                        <InnerShadow color="#b2a1a1" height="66.07" radius="38.545" width="90.11" />
+                     </effect>
+                  </Button>
+                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="257.0" prefWidth="304.0" style="-fx-background-color: black; -fx-border-color: white;" textFill="WHITE" GridPane.rowIndex="2">
+                     <font>
+                        <Font name="Jokerman" size="52.0" />
+                     </font>
+                     <effect>
+                        <InnerShadow blurType="GAUSSIAN" color="#814681" height="90.8" radius="46.5125" width="97.25" />
+                     </effect>
+                  </Button>
+                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="210.0" prefWidth="210.0" style="-fx-background-color: black; -fx-border-color: white;" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <font>
+                        <Font name="Jokerman" size="52.0" />
+                     </font>
+                     <effect>
+                        <InnerShadow blurType="GAUSSIAN" color="#b2a1a1" height="74.81" radius="35.36" width="68.63" />
+                     </effect>
+                  </Button>
+                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="136.0" prefWidth="165.0" style="-fx-background-color: black; -fx-border-color: white;" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                     <font>
+                        <Font name="Jokerman" size="52.0" />
+                     </font>
+                     <effect>
+                        <InnerShadow blurType="GAUSSIAN" color="#814681" height="90.8" radius="46.5125" width="97.25" />
+                     </effect>
+                  </Button>
+               </children>
+               <effect>
+                  <DropShadow color="#a731a7" height="11.47" radius="5.235" spread="0.1" width="11.47" />
+               </effect>
+            </GridPane>
+            <Pane prefHeight="211.0" prefWidth="640.0" style="-fx-background-color: black;">
+               <children>
+                  <Label layoutX="58.0" layoutY="35.0" prefHeight="142.0" prefWidth="150.0" style="-fx-background-radius: 100; -fx-border-color: white; -fx-border-radius: 100; -fx-padding: 5; -fx-label-padding: 20; -fx-border-width: 5;">
+                     <effect>
+                        <DropShadow color="#a731a7" height="30.47" radius="14.75" spread="0.71" width="30.53" />
+                     </effect>
+                  </Label>
+                  <Label alignment="CENTER" layoutX="275.0" layoutY="74.0" prefHeight="64.0" prefWidth="30.0" style="-fx-region-background: black;" text="V" textFill="#bab8b8">
+                     <font>
+                        <Font size="40.0" />
+                     </font>
+                     <effect>
+                        <DropShadow color="#b2a1a1" spread="0.47" />
+                     </effect>
+                  </Label>
+                  <Label alignment="CENTER" layoutX="305.0" layoutY="74.0" prefHeight="64.0" prefWidth="30.0" style="-fx-region-background: black;" text="S" textFill="#bab8b8">
+                     <font>
+                        <Font size="40.0" />
+                     </font>
+                     <effect>
+                        <DropShadow color="#a731a7" spread="0.47" />
+                     </effect>
+                  </Label>
+                  <Label layoutX="398.0" layoutY="35.0" prefHeight="142.0" prefWidth="146.0" style="-fx-background-radius: 100; -fx-border-color: white; -fx-border-radius: 100; -fx-padding: 5; -fx-label-padding: 20; -fx-border-width: 5;">
+                     <effect>
+                        <DropShadow color="#b2a1a1ed" height="30.53" radius="14.765" spread="0.71" width="30.53" />
+                     </effect>
+                  </Label>
+               </children>
+            </Pane>
+         </children>
+      </Pane>
+   </left>
+   <right>
+      <Pane prefHeight="554.0" prefWidth="262.0" style="-fx-background-color: black;" BorderPane.alignment="CENTER">
+         <children>
+            <Label layoutX="14.0" layoutY="33.0" prefHeight="64.0" prefWidth="129.0" style="-fx-region-background: black;" text="Player1" textFill="#bab8b8">
+               <font>
+                  <Font size="40.0" />
+               </font>
+               <effect>
+                  <DropShadow color="#b2a1a1" height="13.97" radius="6.455" spread="0.2" width="13.85" />
+               </effect>
+            </Label>
+            <Label layoutX="205.0" layoutY="36.0" prefHeight="43.0" prefWidth="27.0" style="-fx-region-background: black;" text="5" textFill="#bab8b8">
+               <font>
+                  <Font size="40.0" />
+               </font>
+               <effect>
+                  <DropShadow color="#b2a1a1" height="13.91" radius="6.4399999999999995" spread="0.42" width="13.85" />
+               </effect>
+            </Label>
+            <Label layoutX="13.0" layoutY="105.0" prefHeight="64.0" prefWidth="131.0" style="-fx-region-background: black;" text="Player2" textFill="#bab8b8">
+               <font>
+                  <Font size="40.0" />
+               </font>
+               <effect>
+                  <DropShadow color="#a731a7" height="13.96" radius="6.452500000000001" spread="0.64" width="13.85" />
+               </effect>
+            </Label>
+            <Label layoutX="207.0" layoutY="105.0" prefHeight="0.0" prefWidth="23.0" style="-fx-region-background: black;" text="6" textFill="#bab8b8">
+               <font>
+                  <Font size="43.0" />
+               </font>
+               <effect>
+                  <DropShadow color="#a731a7" height="14.08" radius="6.4825" spread="0.62" width="13.85" />
+               </effect>
+            </Label>
+            <Button accessibleRole="TOGGLE_BUTTON" layoutX="55.0" layoutY="625.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="49.0" prefWidth="146.0" style="-fx-background-color: black; -fx-border-color: white; -fx-background-radius: 100; -fx-border-radius: 100; -fx-region-background: black;" text="Back" textFill="#fdfdfd">
+               <font>
+                  <Font size="15.0" />
+               </font>
+               <effect>
+                  <DropShadow color="#a731a7" spread="0.6" />
+               </effect>
+            </Button>
+         </children>
+      </Pane>
+   </right>
+</BorderPane>
