@@ -1,6 +1,5 @@
 package tictactoe;
 
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -161,6 +160,7 @@ public class IntroPageBase extends BorderPane {
             @Override
             public void handle(MouseEvent ev)
             {
+                client.sendDataToServer("SO");
                 client.setGameRoot("login");
             }
         });

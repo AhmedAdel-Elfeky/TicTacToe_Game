@@ -29,7 +29,7 @@ public  class LossBase extends Pane {
         dropShadow0 = new DropShadow();
         button0 = new Button();
         dropShadow1 = new DropShadow();
-        MediaPlayer player = new MediaPlayer( new Media(getClass().getResource("./img/loseer.mp4").toExternalForm()));
+        MediaPlayer player = new MediaPlayer( new Media(getClass().getResource("img/loseer.mp4").toExternalForm()));
         setMaxHeight(USE_PREF_SIZE);
         setMaxWidth(USE_PREF_SIZE);
         setMinHeight(USE_PREF_SIZE);

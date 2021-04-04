@@ -612,6 +612,7 @@ public  class TicTacBase extends BorderPane {
                 alert.showAndWait().ifPresent(response -> {
                 if (response == ok) {
                     client.setGameRoot("startGame");
+                    client.sendDataToServer("iq");
                 } 
 });
                     }   

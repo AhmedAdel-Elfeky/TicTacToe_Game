@@ -1,13 +1,10 @@
 package tictactoe;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.effect.DropShadow;
@@ -17,7 +14,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
-import javafx.stage.FileChooser;
 
 public class PlayerProfileBase extends BorderPane {
 
@@ -325,7 +321,7 @@ public class PlayerProfileBase extends BorderPane {
             @Override
             public void handle(MouseEvent event) {
               if(!splitMenuButton.getText().equals("Choose one to play"))
-                    client.sendDataToServer("sm" + splitMenuButton.getText()); 
+                    client.sendDataToServer("sm" + splitMenuButton.getText());
             }
         });
         button0.setOnMouseExited(new EventHandler<MouseEvent>() {
@@ -455,8 +451,6 @@ public class PlayerProfileBase extends BorderPane {
         pane.getChildren().add(label9);
         pane.getChildren().add(label10);
         pane.getChildren().add(label11);
-//        splitMenuButton.getItems().add(menuItem);
-//        splitMenuButton.getItems().add(menuItem0);
         pane.getChildren().add(splitMenuButton);
         pane.getChildren().add(label12);
         pane.getChildren().add(button0);

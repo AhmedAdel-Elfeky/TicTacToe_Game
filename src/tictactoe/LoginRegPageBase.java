@@ -189,24 +189,17 @@ public class LoginRegPageBase extends BorderPane {
             public void handle(MouseEvent ev)
             {
                 setLoginUserData(textField.getText(),passwordField.getText());
-                int userLength = userName.length();
-                int passwordLength = password.length();
-                if(passwordLength>0 && userLength>0)
-                {
-                    if(client.falseId < 10)
-                    {
-                        client.sendDataToServer("01"+"0"+client.falseId+userLength+userName+passwordLength+password); 
-                    }
-                    else
-                        client.sendDataToServer("01"+client.falseId+userLength+userName+passwordLength+password);    
+                if(userName.length()>0 && password.length()>0)
+                {     
+                    client.sendDataToServer("01"+"0_"+userName+"_"+password);         
                 }
-                else if(passwordLength == 0 && userLength == 0)
+                else if(password.length() == 0 && userName.length() == 0)
                 {
                     loginAlert.setTitle("Error");
                     loginAlert.setContentText("you must enter your username and your password");
                     loginAlert.showAndWait();
                 }
-                else if(userLength == 0)
+                else if(userName.length() == 0)
                 {
                     loginAlert.setTitle("Error");
                     loginAlert.setContentText("you must enter your username");
@@ -499,7 +492,7 @@ public class LoginRegPageBase extends BorderPane {
         label8.setFont(new Font("Jokerman", 22.0));
         
         try {
-            image1 = new Image("file:src/tictactoe/img/av1.jpg",70, 50, false, true);
+            image1 = new Image("file:src/tictactoe/img/av1.jpg",70, 50, true, true);
             imageView1 = new ImageView(image1);
             image2 = new Image("file:src/tictactoe/img/av2.jpg", 70, 50, false, true);
             imageView2 = new ImageView(image2);
